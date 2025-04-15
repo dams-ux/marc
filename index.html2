@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Avions Anciens</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #f4f4f4;
+        }
+        header {
+            background: #333;
+            color: white;
+            text-align: center;
+            padding: 20px;
+        }
+        .container {
+            width: 80%;
+            margin: auto;
+            overflow: hidden;
+        }
+        .card {
+            background: white;
+            padding: 20px;
+            margin: 20px 0;
+            border-radius: 10px;
+            box-shadow: 0px 0px 10px rgba(0,0,0,0.1);
+        }
+        img {
+            width: 100%;
+            border-radius: 10px;
+        }
+        footer {
+            text-align: center;
+            padding: 20px;
+            background: #333;
+            color: white;
+            margin-top: 20px;
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <h1>Les Avions Anciens</h1>
+        <p>Découvrez l'histoire des avions qui ont marqué l'aviation</p>
+    </header>
+    <div class="container">
+        <div class="card">
+            <img src="spitfire.jpg" alt="Supermarine Spitfire">
+            <h2>Supermarine Spitfire</h2>
+            <p>Le Spitfire est un avion de chasse britannique célèbre pour son rôle durant la Seconde Guerre mondiale.</p>
+        </div>
+        <div class="card">
+            <img src="dc3.jpg" alt="Douglas DC-3">
+            <h2>Douglas DC-3</h2>
+            <p>Le Douglas DC-3 est un avion de transport révolutionnaire qui a marqué l'aviation civile et militaire.</p>
+        </div>
+        <div class="card">
+            <img src="concorde.jpg" alt="Concorde">
+            <h2>Concorde</h2>
+            <p>Le Concorde est un avion supersonique franco-britannique qui a révolutionné le transport aérien.</p>
+        </div>
+    </div>
+    <footer>
+        <p>&copy; 2025 Avions Anciens - Tous droits réservés</p>
+    </footer>
+</body>
+</html>

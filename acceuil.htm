@@ -1,0 +1,255 @@
+<!-- <!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Avions Anciens</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #f4f4f4;
+        }
+        header {
+            background: #000000;
+            color: white;
+            text-align: center;
+            padding: 20px;
+        }
+        .container {
+            width: 80%;
+            margin: auto;
+            overflow: hidden;
+        }
+        .card {
+            background: rgb(10, 118, 206);
+            padding: 20px;
+            margin: 20px 0;
+            border-radius: 10px;
+            box-shadow: 0px 0px 10px rgba(0,0,0,0.1);
+        }
+        img {
+            max-block-size: 50%;
+            margin-right: 100px ;
+            width:500px;;
+            border-radius: 10px;
+        }
+        footer {
+            text-align: center;
+            padding: 20px;
+            background: #333;
+            color: white;
+            margin-top: 20px;
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <h1>Les Avions Anciens</h1>
+        <p>Découvrez l'histoire des avions qui ont marqué l'aviation</p>
+    </header>
+    <div class="container">
+        <div class="card">
+            <img src="pexels-photo-239194.jpeg" alt="Supermarine Spitfire">
+            <img src="pexels-photo-327331.webp" alt="Douglas DC-3">
+            <h2>Supermarine Spitfire</h2>
+            <h2>Douglas DC-3</h2>
+            <p>Le Spitfire est un avion de chasse britannique célèbre pour son rôle durant la Seconde Guerre mondiale.</p>
+            <p>Le Douglas DC-3 est un avion de transport révolutionnaire qui a marqué l'aviation civile et militaire.</p>
+        </div>
+        <div class="card">
+            <img src="pexels-photo-327331.webp" alt="Douglas DC-3">
+            <h2>Douglas DC-3</h2>
+            <p>Le Douglas DC-3 est un avion de transport révolutionnaire qui a marqué l'aviation civile et militaire.</p>
+        </div>
+        <div class="card">
+            <img src="aircraft-propeller-plane-propeller-pilot-73874.webp" alt="Concorde">
+            <h2>Concorde</h2>
+            <p>Le Concorde est un avion supersonique franco-britannique qui a révolutionné le transport aérien.</p>
+        </div>
+    </div>
+    <footer>
+        <p>&copy; 2025 Avions Anciens - Tous droits réservés</p>
+    </footer>
+</body>
+</html> -->
+<!DOCTYPE html>
+<html lang="fr">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Avions Anciens</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #000000;
+            display: flex;
+            flex-direction: column;
+            min-height: 100vh;
+        }
+
+        header {
+            background: #000000;
+            color: white;
+            text-align: center;
+            padding: 30px;
+            font-size: 1.5em;
+        }
+
+        .container {
+            width: 100%;
+            margin: auto;
+            overflow: hidden;
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            flex-grow: 1;
+            background: linear-gradient(to right, #f30606, #eccb0c);
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.2);
+        }
+
+        .card {
+            background: white;
+            padding: 20px;
+            margin: 100px;
+            border-radius: 10px;
+            box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1);
+            width: 100%;
+            max-width: 300px;
+            text-align: center;
+        }
+
+        img {
+            width: 100%;
+            border-radius: 10px;
+        }
+
+        footer {
+            text-align: center;
+            padding: 20px;
+            background: #000000;
+            color: white;
+            margin-top: auto;
+        }
+
+        nav {
+            background: #000000;
+            padding: 30px;
+            text-align: center;
+            position: sticky;
+            top: 0;
+            width: 100%;
+            z-index: 1000;
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .nav-links {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+        }
+
+        nav a {
+            color: white;
+            text-decoration: none;
+            margin: 0 15px;
+            font-size: 1.2em;
+        }
+
+        nav a:hover {
+            text-decoration: underline;
+        }
+
+        .menu-toggle {
+            display: none;
+            font-size: 1.5em;
+            background: none;
+            border: none;
+            color: white;
+            cursor: pointer;
+        }
+
+        @media (max-width: 768px) {
+            nav {
+                flex-direction: column;
+                align-items: center;
+            }
+
+            .nav-links {
+                display: none;
+                flex-direction: column;
+                width: 100%;
+                text-align: center;
+            }
+
+            .nav-links a {
+                margin: 10px 0;
+            }
+
+            .menu-toggle {
+                display: block;
+            }
+
+            .nav-links.active {
+                display: flex;
+            }
+        }
+    </style>
+    <script>
+        function toggleMenu() {
+            const navLinks = document.querySelector('.nav-links');
+            navLinks.classList.toggle('active');
+        }
+    </script>
+</head>
+
+<body>
+    <nav>
+        <button class="menu-toggle" onclick="toggleMenu()">☰</button>
+        <div class="nav-links">
+            <a href="acceuil.htm">Accueil</a>
+            <a href="contact.html">Contact</a>
+            <a href="inscription.html">inscription</a>
+            <a href="histoite.html">histoire</a>
+        </div>
+    </nav>
+    <header>
+        <h1>Les Avions Anciens</h1>
+        <p>Découvrez l'histoire des avions qui ont marqué l'aviation</p>
+    </header>
+
+
+    <div class="container">
+        <div class="card" id="spitfire">
+            <img src="aircraft-propeller-plane-propeller-pilot-73874.webp" alt="Supermarine Spitfire">
+            <h2>Supermarine Spitfire</h2>
+            <p>Le Spitfire est un avion de chasse britannique célèbre pour son rôle durant la Seconde Guerre mondiale.
+            </p>
+        </div>
+        <div class="card" id="dc3">
+            <img src="pexels-photo-327331.webp" alt="Douglas DC-3">
+            <h2>Douglas DC-3</h2>
+            <p>Le Douglas DC-3 est un avion de transport révolutionnaire qui a marqué l'aviation civile et militaire.
+            </p>
+        </div>
+         <div class="card" id="concorde"> 
+            <img src="AM_Weap_Shotgun_Reload.uasset" alt="Concorde">
+            <h2>Concorde</h2>
+            <p>Le Concorde est un avion supersonique franco-britannique qui a révolutionné le transport aérien.</p>
+        </div>
+    </div>
+    <footer>
+        <p>&copy; 2025 Avions Anciens - Tous droits réservés</p>
+    </footer>
+</body>
+
+</html>

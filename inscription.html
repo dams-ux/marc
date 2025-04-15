@@ -1,0 +1,149 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Inscription</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #f4f4f4;
+            display: flex;
+            flex-direction: column;
+            min-height: 100vh;
+        }
+        header {
+            background: #222;
+            color: white;
+            text-align: center;
+            padding: 30px;
+            font-size: 1.5em;
+        }
+        .container {
+            width: 90%;
+            margin: auto;
+            overflow: hidden;
+            flex-grow: 1;
+            background: white;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0px 0px 10px rgba(0,0,0,0.2);
+        }
+        footer {
+            text-align: center;
+            padding: 20px;
+            background: #222;
+            color: white;
+            margin-top: auto;
+        }
+        nav {
+            background: #444;
+            padding: 15px;
+            text-align: center;
+            position: sticky;
+            top: 0;
+            width: 100%;
+            z-index: 1000;
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .nav-links {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+        }
+        nav a {
+            color: white;
+            text-decoration: none;
+            margin: 0 15px;
+            font-size: 1.2em;
+        }
+        nav a:hover {
+            text-decoration: underline;
+        }
+        .signup-form {
+            display: flex;
+            flex-direction: column;
+            max-width: 500px;
+            margin: auto;
+        }
+        .signup-form label {
+            margin-top: 10px;
+        }
+        .signup-form input {
+            width: 100%;
+            padding: 10px;
+            margin-top: 5px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+        }
+        .signup-form button {
+            margin-top: 15px;
+            padding: 10px;
+            background: #007BFF;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 1.2em;
+        }
+        .signup-form button:hover {
+            background: #0056b3;
+        }
+        @media (max-width: 768px) {
+            nav {
+                flex-direction: column;
+                align-items: center;
+            }
+            .nav-links {
+                display: flex;
+                flex-direction: column;
+                width: 100%;
+                text-align: center;
+            }
+            .nav-links a {
+                margin: 10px 0;
+            }
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <h1>Inscription</h1>
+        <p>Créez votre compte</p>
+    </header>
+    <nav>
+        <div class="nav-links">
+            <a href="acceuil.htm">Accueil</a>
+            <a href="histoire.html">Histoire</a>
+            <a href="contact.html">Contact</a>
+            <a href="inscription.html">Inscription</a>
+        </div>
+    </nav>
+    <div class="container">
+        <h2>Formulaire d'inscription</h2>
+        <form class="signup-form">
+            <label for="username">Nom d'utilisateur :</label>
+            <input type="text" id="username" name="username" required>
+            
+            <label for="email">Email :</label>
+            <input type="email" id="email" name="email" required>
+            
+            <label for="password">Mot de passe :</label>
+            <input type="password" id="password" name="password" required>
+            
+            <label for="confirm-password">Confirmez le mot de passe :</label>
+            <input type="password" id="confirm-password" name="confirm-password" required>
+            
+            <button type="submit">S'inscrire</button>
+        </form>
+    </div>
+    <footer>
+        <p>&copy; 2025 Avions Anciens - Tous droits réservés</p>
+    </footer>
+</body>
+</html>
