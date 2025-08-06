@@ -1,0 +1,35 @@
+{
+  "name": "aviation-store",
+  "version": "1.0.0",
+  "description": "Site e-commerce pour t-shirts et accessoires d'aviation",
+  "main": "index.html",
+  "scripts": {
+    "start": "npx live-server --port=3000 --open=/index.html",
+    "dev": "npx live-server --port=3000 --open=/index.html --watch",
+    "build": "echo 'No build process needed for static site'",
+    "deploy": "echo 'Ready for deployment - upload files to web server'"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/dams-ux/marc.git"
+  },
+  "keywords": [
+    "ecommerce",
+    "aviation",
+    "tshirts",
+    "accessories",
+    "javascript",
+    "html",
+    "css",
+    "responsive"
+  ],
+  "author": "Marc",
+  "license": "MIT",
+  "homepage": "https://github.com/dams-ux/marc#readme",
+  "devDependencies": {
+    "live-server": "^1.2.2"
+  },
+  "engines": {
+    "node": ">=14.0.0"
+  }
+}
