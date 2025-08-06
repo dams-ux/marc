@@ -20,7 +20,7 @@ body {
 
 /* Header */
 .header {
-    background: linear-gradient(135deg, #1e3c72, #2a5298);
+    background: linear-gradient(135deg, #FF4500, #1E90FF);
     color: white;
     position: fixed;
     top: 0;
@@ -63,7 +63,7 @@ body {
 }
 
 .nav a:hover {
-    color: #ffd700;
+    color: #C0C0C0;
 }
 
 .admin-link {
@@ -92,7 +92,7 @@ body {
     position: absolute;
     top: -8px;
     right: -8px;
-    background: #ff4757;
+    background: #FF4500;
     color: white;
     border-radius: 50%;
     width: 20px;
@@ -107,7 +107,7 @@ body {
 /* Hero Section */
 .hero {
     margin-top: 80px;
-    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    background: linear-gradient(135deg, #1E90FF 0%, #FF4500 100%);
     color: white;
     padding: 4rem 0;
     display: flex;
@@ -133,7 +133,7 @@ body {
 }
 
 .cta-button {
-    background: #ffd700;
+    background: #C0C0C0;
     color: #333;
     border: none;
     padding: 1rem 2rem;
@@ -146,7 +146,7 @@ body {
 }
 
 .cta-button:hover {
-    background: #ffed4e;
+    background: #A8A8A8;
     transform: translateY(-2px);
     box-shadow: 0 5px 15px rgba(0,0,0,0.2);
 }
@@ -191,7 +191,7 @@ body {
 
 .filter-btn:hover,
 .filter-btn.active {
-    background: #3498db;
+    background: #1E90FF;
     color: white;
     transform: translateY(-2px);
 }
@@ -216,12 +216,12 @@ body {
 .product-card:hover {
     transform: translateY(-5px);
     box-shadow: 0 10px 25px rgba(0,0,0,0.15);
-    border-color: #3498db;
+    border-color: #1E90FF;
 }
 
 .product-image {
     font-size: 4rem;
-    color: #3498db;
+    color: #FF4500;
     margin-bottom: 1rem;
 }
 
@@ -234,12 +234,12 @@ body {
 .price {
     font-size: 1.5rem;
     font-weight: bold;
-    color: #27ae60;
+    color: #FF4500;
     margin-bottom: 1.5rem;
 }
 
 .add-to-cart {
-    background: #27ae60;
+    background: #1E90FF;
     color: white;
     border: none;
     padding: 0.8rem 1.5rem;
@@ -251,14 +251,14 @@ body {
 }
 
 .add-to-cart:hover {
-    background: #219a52;
+    background: #187BD1;
     transform: translateY(-2px);
 }
 
 /* About Section */
 .about-section {
     padding: 4rem 0;
-    background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+    background: linear-gradient(135deg, #C0C0C0 0%, #FF4500 100%);
     color: white;
     text-align: center;
 }
@@ -310,7 +310,7 @@ body {
 
 .contact-item i {
     font-size: 2rem;
-    color: #3498db;
+    color: #1E90FF;
     margin-bottom: 1rem;
 }
 
@@ -386,7 +386,7 @@ body {
     text-align: right;
     padding: 1rem 0;
     font-size: 1.2rem;
-    border-top: 2px solid #3498db;
+    border-top: 2px solid #1E90FF;
     margin-top: 1rem;
 }
 
@@ -408,21 +408,21 @@ body {
 }
 
 .btn-primary {
-    background: #3498db;
+    background: #1E90FF;
     color: white;
 }
 
 .btn-primary:hover {
-    background: #2980b9;
+    background: #187BD1;
 }
 
 .btn-secondary {
-    background: #95a5a6;
-    color: white;
+    background: #C0C0C0;
+    color: #333;
 }
 
 .btn-secondary:hover {
-    background: #7f8c8d;
+    background: #A8A8A8;
 }
 
 /* Footer */

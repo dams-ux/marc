@@ -117,7 +117,7 @@ function showCartNotification(itemName) {
         position: fixed;
         top: 100px;
         right: 20px;
-        background: #27ae60;
+        background: #1E90FF;
         color: white;
         padding: 1rem 1.5rem;
         border-radius: 25px;
@@ -326,7 +326,7 @@ function showAdminAccessNotification() {
         top: 50%;
         left: 50%;
         transform: translate(-50%, -50%);
-        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        background: linear-gradient(135deg, #FF4500 0%, #1E90FF 100%);
         color: white;
         padding: 2rem 3rem;
         border-radius: 15px;

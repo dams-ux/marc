@@ -147,8 +147,8 @@ function initializeSalesChart() {
             datasets: [{
                 label: 'Ventes',
                 data: data,
-                borderColor: '#3498db',
-                backgroundColor: 'rgba(52, 152, 219, 0.1)',
+                borderColor: '#1E90FF',
+                backgroundColor: 'rgba(30, 144, 255, 0.1)',
                 borderWidth: 3,
                 fill: true,
                 tension: 0.4
@@ -187,8 +187,8 @@ function initializeProductsChart() {
     const labels = Object.keys(productCounts);
     const data = Object.values(productCounts);
     const colors = [
-        '#FF6384', '#36A2EB', '#FFCE56', '#4BC0C0',
-        '#9966FF', '#FF9F40', '#FF6384', '#C9CBCF'
+        '#FF4500', '#1E90FF', '#C0C0C0', '#FF6347',
+        '#4682B4', '#D3D3D3', '#FF7F50', '#6495ED'
     ];
     
     if (productsChart) {
@@ -242,8 +242,8 @@ function initializeCategoryChart() {
             datasets: [{
                 label: 'Ventes',
                 data: [categoryCounts.tshirts, categoryCounts.accessories],
-                backgroundColor: ['#667eea', '#764ba2'],
-                borderColor: ['#5a6fd8', '#6a4190'],
+                backgroundColor: ['#FF4500', '#1E90FF'],
+                borderColor: ['#E03E00', '#187BD1'],
                 borderWidth: 2
             }]
         },
@@ -307,8 +307,8 @@ function initializeRevenueChart() {
             datasets: [{
                 label: 'Chiffre d\'affaires (€)',
                 data: data,
-                backgroundColor: 'rgba(39, 174, 96, 0.8)',
-                borderColor: '#27ae60',
+                backgroundColor: 'rgba(255, 69, 0, 0.8)',
+                borderColor: '#FF4500',
                 borderWidth: 2
             }]
         },

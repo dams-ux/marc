@@ -20,7 +20,7 @@ body {
 
 /* Header */
 .header {
-    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    background: linear-gradient(135deg, #FF4500 0%, #1E90FF 100%);
     color: white;
     padding: 1rem 0;
     box-shadow: 0 2px 10px rgba(0,0,0,0.1);
@@ -105,7 +105,7 @@ body {
 }
 
 .stat-icon {
-    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    background: linear-gradient(135deg, #FF4500 0%, #1E90FF 100%);
     color: white;
     width: 60px;
     height: 60px;
@@ -183,21 +183,21 @@ body {
 }
 
 .btn-primary {
-    background: #3498db;
+    background: #1E90FF;
     color: white;
 }
 
 .btn-primary:hover {
-    background: #2980b9;
+    background: #187BD1;
 }
 
 .btn-secondary {
-    background: #95a5a6;
-    color: white;
+    background: #C0C0C0;
+    color: #333;
 }
 
 .btn-secondary:hover {
-    background: #7f8c8d;
+    background: #A8A8A8;
 }
 
 .btn-info {
@@ -210,7 +210,7 @@ body {
 }
 
 .btn.active {
-    background: #3498db;
+    background: #1E90FF;
     color: white;
 }
 
@@ -357,7 +357,7 @@ tbody tr:hover {
 }
 
 .admin-product-card:hover {
-    border-color: #3498db;
+    border-color: #1E90FF;
     transform: translateY(-2px);
 }
 
@@ -377,12 +377,12 @@ tbody tr:hover {
 .admin-product-price {
     font-size: 1.3rem;
     font-weight: bold;
-    color: #27ae60;
+    color: #FF4500;
 }
 
 .admin-product-category {
     display: inline-block;
-    background: #3498db;
+    background: #1E90FF;
     color: white;
     padding: 0.3rem 0.8rem;
     border-radius: 20px;
@@ -414,12 +414,12 @@ tbody tr:hover {
 }
 
 .btn-edit {
-    background: #f39c12;
+    background: #FF4500;
     color: white;
 }
 
 .btn-edit:hover {
-    background: #e67e22;
+    background: #E03E00;
     transform: scale(1.1);
 }
 
@@ -473,7 +473,7 @@ tbody tr:hover {
 .form-group select:focus,
 .form-group textarea:focus {
     outline: none;
-    border-color: #3498db;
+    border-color: #1E90FF;
 }
 
 .form-group small {
