@@ -378,16 +378,20 @@ tbody tr:hover {
 }
 
 .products-grid-admin {
-    display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
-    gap: 2rem;
     margin-top: 1rem;
+}
+
+#admin-products-list {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 1rem;
+    max-width: 100%;
 }
 
 .admin-product-card {
     border: 2px solid #f1f3f5;
     border-radius: 16px;
-    padding: 2rem;
+    padding: 1.5rem;
     transition: all 0.3s ease;
     position: relative;
     background: white;
@@ -420,52 +424,94 @@ tbody tr:hover {
     display: flex;
     justify-content: space-between;
     align-items: flex-start;
-    margin-bottom: 1.5rem;
+    margin-bottom: 1rem;
 }
 
 .admin-product-info h3 {
     color: #2c3e50;
-    font-size: 1.3rem;
+    font-size: 1.1rem;
     font-weight: 600;
-    margin-bottom: 0.8rem;
+    margin-bottom: 0.5rem;
     line-height: 1.2;
+    text-align: center;
 }
 
 .admin-product-price {
-    font-size: 1.5rem;
+    font-size: 1.3rem;
     font-weight: 700;
     color: #FF4500;
     text-shadow: 0 1px 2px rgba(255, 69, 0, 0.1);
+    text-align: center;
 }
 
 .admin-product-category {
     display: inline-block;
     background: linear-gradient(135deg, #1E90FF, #0066CC);
     color: white;
-    padding: 0.5rem 1rem;
-    border-radius: 25px;
-    font-size: 0.85rem;
+    padding: 0.3rem 0.8rem;
+    border-radius: 20px;
+    font-size: 0.75rem;
     font-weight: 500;
-    margin: 0.8rem 0;
+    margin: 0.5rem 0;
     text-transform: uppercase;
     letter-spacing: 0.5px;
     box-shadow: 0 2px 8px rgba(30, 144, 255, 0.3);
 }
 
 .admin-product-icon {
-    font-size: 2.5rem;
+    font-size: 2rem;
     color: #1E90FF;
     text-align: center;
-    padding: 1rem;
+    padding: 0.8rem;
     background: #f8f9ff;
     border-radius: 50%;
-    width: 80px;
-    height: 80px;
+    width: 60px;
+    height: 60px;
     display: flex;
     align-items: center;
     justify-content: center;
     margin: 0 auto;
-    margin-bottom: 1.5rem;
+    margin-bottom: 1rem;
+}
+
+/* Styles pour les images dans l'admin */
+.admin-product-image {
+    width: 60px;
+    height: 60px;
+    border-radius: 50%;
+    object-fit: cover;
+    margin: 0 auto;
+    margin-bottom: 1rem;
+    border: 3px solid #1E90FF;
+    box-shadow: 0 4px 12px rgba(30, 144, 255, 0.3);
+}
+
+.admin-product-icon-fallback {
+    font-size: 2rem;
+    color: #1E90FF;
+    text-align: center;
+    padding: 0.8rem;
+    background: #f8f9ff;
+    border-radius: 50%;
+    width: 60px;
+    height: 60px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: 0 auto;
+    margin-bottom: 1rem;
+}
+
+.admin-image-indicator {
+    background: rgba(30, 144, 255, 0.1);
+    color: #1E90FF;
+    padding: 0.3rem 0.8rem;
+    border-radius: 15px;
+    font-size: 0.75rem;
+    margin-top: 0.5rem;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.3rem;
 }
 
 .admin-product-description,
@@ -989,7 +1035,7 @@ tbody tr:hover {
         margin-bottom: 1rem;
     }
     
-    .products-grid-admin {
+    #admin-products-list {
         grid-template-columns: 1fr;
         gap: 1.5rem;
     }

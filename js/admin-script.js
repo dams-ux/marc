@@ -49,8 +49,16 @@ function initializeDashboard() {
     initializeCharts();
     populateSalesTable();
     
-    // Charger les produits du localStorage automatiquement
-    refreshProductsList();
+    // Attendre que window.products soit disponible depuis main.js
+    const checkProducts = () => {
+        if (window.products && Object.keys(window.products).length > 0) {
+            refreshProductsList();
+        } else {
+            setTimeout(checkProducts, 100);
+        }
+    };
+    
+    checkProducts();
 
     // Show a welcome message if no data exists
     const salesData = getSalesData();
@@ -58,6 +66,7 @@ function initializeDashboard() {
         showMessage('Aucune donnée de vente trouvée. Utilisez le bouton "Générer des données d\'exemple" pour commencer.', 'info');
     }
 }
+
 // Get sales data from localStorage
 function getSalesData() {
     return JSON.parse(localStorage.getItem('maspalegrySales') || '[]');
@@ -515,15 +524,22 @@ function showMessage(text, type = 'info') {
 }
 // Products Management Functions
 let productToDelete = null;
-// Get products from main.js (unified system)
+// Get products from localStorage (source of truth)
 function getProducts() {
+    const stored = localStorage.getItem('maspalegryProducts');
+    if (stored) {
+        const products = JSON.parse(stored);
+        // Synchronize with window.products
+        window.products = products;
+        return products;
+    }
     return window.products || {};
 }
 // Save products to localStorage
 function saveProducts(products) {
     localStorage.setItem('maspalegryProducts', JSON.stringify(products));
-    // Also update the global products variable
-    Object.assign(window.products, products);
+    window.products = products;
+    localStorage.setItem('maspalegryProductsLastUpdate', Date.now().toString());
 }
 // Load and display products list
 function loadProductsList() {
@@ -539,99 +555,21 @@ function refreshProductsList() {
         return;
     }
     
-    // Utiliser la variable products de main.js au lieu de recharger
+    // Utiliser la variable products de main.js
     if (!window.products || Object.keys(window.products).length === 0) {
-        container.innerHTML = '<p style="text-align: center; color: #666; padding: 40px;">Aucun produit trouvé. Les produits se chargent depuis main.js...</p>';
+        container.innerHTML = '<p style="text-align: center; color: #666; padding: 40px;">Chargement des produits...</p>';
         return;
     }
     
-    console.log('Admin: Affichage des produits depuis main.js:', window.products);
-    
-    // Vider et recréer
+    // Vider le container
     container.innerHTML = '';
     
-    Object.entries(window.products).forEach(([id, product]) => {
-        const productCard = document.createElement('div');
-        productCard.className = 'admin-product-card';
-        productCard.innerHTML = `
-            <div class="admin-product-header">
-                <div class="admin-product-info">
-                    <div class="admin-product-icon">
-                        <i class="${product.icon || 'fas fa-box'}"></i>
-                    </div>
-                    <h3>${product.name}</h3>
-                    <div class="admin-product-price">${product.price.toFixed(2)}€</div>
-                    <div class="admin-product-category">${product.category === 'tshirts' ? 'T-shirts' : 'Accessoires'}</div>
-                    ${product.description ? `<p style="margin: 5px 0; color: #666; font-size: 0.9em;">${product.description}</p>` : ''}
-                </div>
-                <div class="admin-product-actions">
-                    <button class="btn-icon btn-edit" onclick="editProduct(${id})" title="Modifier">
-                        <i class="fas fa-edit"></i>
-                    </button>
-                    <button class="btn-icon btn-delete" onclick="deleteProduct(${id})" title="Supprimer">
-                        <i class="fas fa-trash"></i>
-                    </button>
-                </div>
-            </div>
-        `;
-        container.appendChild(productCard);
-    });
-    
-    console.log('Products refreshed:', Object.keys(products).length, 'products loaded');
-}
-
-// Force load products - fonction de debug
-function forceLoadProducts() {
-    console.log('Force loading products...');
-    const container = document.getElementById('admin-products-list');
-    
-    if (!container) {
-        alert('Conteneur admin-products-list non trouvé!');
-        return;
+    // Utiliser generateProductCards de main.js qui gère déjà l'admin
+    if (typeof generateProductCards === 'function') {
+        generateProductCards();
+    } else {
+        console.error('generateProductCards function not available');
     }
-    
-    // Créer des produits manuellement
-    const defaultProducts = {
-        1: { name: 'T-shirt Pilot Wings', category: 'tshirts', price: 25.99, icon: 'fas fa-tshirt' },
-        2: { name: 'T-shirt Cessna Vintage', category: 'tshirts', price: 24.99, icon: 'fas fa-tshirt' },
-        3: { name: 'Casquette Pilote', category: 'accessories', price: 19.99, icon: 'fas fa-user-pilot' },
-        4: { name: 'Boussole Aviation', category: 'accessories', price: 35.99, icon: 'fas fa-compass' }
-    };
-    
-    // Sauvegarder dans localStorage
-    localStorage.setItem('maspalegryProducts', JSON.stringify(defaultProducts));
-    
-    // Vider le conteneur
-    container.innerHTML = '';
-    
-    // Créer les cartes manuellement
-    Object.entries(defaultProducts).forEach(([id, product]) => {
-        const productCard = document.createElement('div');
-        productCard.className = 'admin-product-card';
-        productCard.innerHTML = `
-            <div class="admin-product-header">
-                <div class="admin-product-info">
-                    <div class="admin-product-icon">
-                        <i class="${product.icon}"></i>
-                    </div>
-                    <h3>${product.name}</h3>
-                    <div class="admin-product-price">${product.price.toFixed(2)}€</div>
-                    <div class="admin-product-category">${product.category === 'tshirts' ? 'T-shirts' : 'Accessoires'}</div>
-                </div>
-                <div class="admin-product-actions">
-                    <button class="btn-icon btn-edit" onclick="editProduct(${id})" title="Modifier">
-                        <i class="fas fa-edit"></i>
-                    </button>
-                    <button class="btn-icon btn-delete" onclick="deleteProduct(${id})" title="Supprimer">
-                        <i class="fas fa-trash"></i>
-                    </button>
-                </div>
-            </div>
-        `;
-        container.appendChild(productCard);
-    });
-    
-    alert('Produits forcés! ' + Object.keys(defaultProducts).length + ' produits ajoutés.');
 }
 
 // Open add product modal
@@ -639,6 +577,21 @@ function openAddProductModal() {
     document.getElementById('product-modal-title').textContent = 'Ajouter un Produit';
     document.getElementById('product-form').reset();
     document.getElementById('product-id').value = '';
+    
+    // Vider les aperçus d'images
+    document.getElementById('preview-front').innerHTML = `
+        <div class="placeholder">
+            <i class="fas fa-image"></i>
+            <span>Aperçu de l'image principale</span>
+        </div>
+    `;
+    document.getElementById('preview-back').innerHTML = `
+        <div class="placeholder">
+            <i class="fas fa-image"></i>
+            <span>Aperçu de l'image arrière</span>
+        </div>
+    `;
+    
     document.getElementById('product-modal').style.display = 'block';
 }
 // Edit product
@@ -655,6 +608,26 @@ function editProduct(id) {
     document.getElementById('product-category').value = product.category;
     document.getElementById('product-icon').value = product.icon || '';
     document.getElementById('product-description').value = product.description || '';
+
+    // Charger les images existantes
+    if (product.images) {
+        if (product.images.front) {
+            document.getElementById('preview-front').innerHTML = `
+                <img src="${product.images.front}" alt="Image principale" style="width: 100%; height: 100%; object-fit: cover; border-radius: 8px;">
+                <button type="button" class="remove-image" onclick="removeImage('front')" title="Supprimer l'image">
+                    <i class="fas fa-times"></i>
+                </button>
+            `;
+        }
+        if (product.images.back) {
+            document.getElementById('preview-back').innerHTML = `
+                <img src="${product.images.back}" alt="Image arrière" style="width: 100%; height: 100%; object-fit: cover; border-radius: 8px;">
+                <button type="button" class="remove-image" onclick="removeImage('back')" title="Supprimer l'image">
+                    <i class="fas fa-times"></i>
+                </button>
+            `;
+        }
+    }
 
     document.getElementById('product-modal').style.display = 'block';
 }
@@ -674,19 +647,37 @@ function saveProduct(event) {
         description: formData.get('description') || ''
     };
 
+    // Récupérer les images si elles existent
+    const frontImg = document.querySelector('#preview-front img');
+    const backImg = document.querySelector('#preview-back img');
+    
+    if (frontImg || backImg) {
+        productData.images = {};
+        if (frontImg) {
+            productData.images.front = frontImg.src;
+        }
+        if (backImg) {
+            productData.images.back = backImg.src;
+        }
+    }
+
     if (productId) {
-        // Edit existing product
+        // Edit existing product - conserver les images existantes si pas de nouvelles
+        const existingProduct = products[productId];
+        if (existingProduct.images && !productData.images) {
+            productData.images = existingProduct.images;
+        }
         products[productId] = productData;
-        showMessage(`Produit modifié avec succès!`, 'success');
+        showMessage(`Produit "${productData.name}" modifié avec succès!`, 'success');
     } else {
         // Add new product
         const newId = Math.max(...Object.keys(products).map(Number)) + 1;
         products[newId] = productData;
-        showMessage(`Produit ajouté avec succès!`, 'success');
+        showMessage(`Produit "${productData.name}" ajouté avec succès!`, 'success');
     }
 
     saveProducts(products);
-    refreshProductsList(); // Utiliser la nouvelle fonction
+    refreshProductsList();
     closeProductModal();
 
     // Refresh dashboard if needed
@@ -744,3 +735,53 @@ document.addEventListener('click', function(event) {
         closeDeleteModal();
     }
 });
+
+// Image upload handling
+function handleImageUpload(event, position) {
+    const file = event.target.files[0];
+    if (!file) return;
+
+    // Vérifier que c'est bien une image
+    if (!file.type.startsWith('image/')) {
+        alert('Veuillez sélectionner un fichier image valide.');
+        return;
+    }
+
+    // Vérifier la taille (max 5MB)
+    if (file.size > 5 * 1024 * 1024) {
+        alert('La taille de l\'image ne doit pas dépasser 5MB.');
+        return;
+    }
+
+    const reader = new FileReader();
+    reader.onload = function(e) {
+        const previewElement = document.getElementById(`preview-${position}`);
+        previewElement.innerHTML = `
+            <img src="${e.target.result}" alt="Aperçu ${position}" style="width: 100%; height: 100%; object-fit: cover; border-radius: 8px;">
+            <button type="button" class="remove-image" onclick="removeImage('${position}')" title="Supprimer l'image">
+                <i class="fas fa-times"></i>
+            </button>
+        `;
+        
+        // Mettre à jour le texte du bouton
+        const fileInputText = event.target.nextElementSibling;
+        fileInputText.textContent = file.name;
+    };
+    reader.readAsDataURL(file);
+}
+
+// Remove image
+function removeImage(position) {
+    const input = document.getElementById(`product-image-${position}`);
+    const preview = document.getElementById(`preview-${position}`);
+    const fileInputText = input.nextElementSibling;
+    
+    input.value = '';
+    fileInputText.textContent = 'Choisir une image...';
+    preview.innerHTML = `
+        <div class="placeholder">
+            <i class="fas fa-image"></i>
+            <span>Aperçu de l'image ${position === 'front' ? 'principale' : 'arrière'}</span>
+        </div>
+    `;
+}

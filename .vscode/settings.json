@@ -23,5 +23,7 @@
         "**/node_modules": true,
         "**/dist": true,
         "**/.git": true
-    }
+    },
+    "typescript.preferences.includePackageJsonAutoImports": "off",
+    "typescript.validate.enable": false
 }

@@ -235,7 +235,19 @@ async function loadProducts() {
         8: { name: 'Badge Pilote', category: 'accessories', price: 15.99, icon: 'fas fa-medal' }
     };
     
-    products = JSON.parse(localStorage.getItem('maspalegryProducts')) || defaultProducts;
+    // Charger depuis localStorage en priorité, sinon utiliser les défauts
+    const storedProducts = localStorage.getItem('maspalegryProducts');
+    if (storedProducts) {
+        products = JSON.parse(storedProducts);
+        console.log('✅ Produits chargés depuis localStorage (modifications conservées)');
+    } else {
+        products = defaultProducts;
+        localStorage.setItem('maspalegryProducts', JSON.stringify(defaultProducts));
+        console.log('✅ Produits par défaut initialisés pour la première fois');
+    }
+    
+    // Exposer les produits à l'objet window pour l'admin
+    window.products = products;
     
     // Debug: vérifier les produits avec images
     console.log('Products loaded:', products);
@@ -244,11 +256,6 @@ async function loadProducts() {
             console.log(`Product ${id} (${product.name}) has images:`, Object.keys(product.images));
         }
     });
-    
-    // Save default products if none exist
-    if (!localStorage.getItem('maspalegryProducts')) {
-        localStorage.setItem('maspalegryProducts', JSON.stringify(defaultProducts));
-    }
     
     // Les images sont maintenant directement incluses dans les données des produits
     // Pas besoin de fonction séparée pour charger les images
@@ -366,15 +373,45 @@ function createIndexProductCard(container, id, product) {
 function createAdminProductCard(container, id, product) {
     const productCard = document.createElement('div');
     productCard.className = 'admin-product-card';
+    
+    // Déterminer l'affichage de l'image/icône comme pour l'index
+    let imageDisplay = '';
+    if (product.images?.front) {
+        // Produit avec image personnalisée
+        imageDisplay = `
+            <img src="${product.images.front}" 
+                 alt="${product.name} - vue de face" 
+                 class="admin-product-image"
+                 onclick="openProductGallery(${id})"
+                 onerror="this.style.display='none'; this.nextElementSibling.style.display='flex'"
+                 onload="console.log('Admin image loaded for product ${id}')">
+            <div class="admin-product-icon-fallback" style="display: none;">
+                <i class="${product.icon}"></i>
+            </div>
+            ${product.images.back ? `
+                <div class="admin-image-indicator">
+                    <i class="fas fa-images"></i>
+                    <span>Cliquer pour voir</span>
+                </div>
+            ` : ''}
+        `;
+    } else {
+        // Produit avec icône par défaut uniquement
+        imageDisplay = `
+            <div class="admin-product-icon">
+                <i class="${product.icon || 'fas fa-box'}"></i>
+            </div>
+        `;
+    }
+    
     productCard.innerHTML = `
         <div class="admin-product-header">
             <div class="admin-product-info">
-                <div class="admin-product-icon">
-                    <i class="${product.icon || 'fas fa-box'}"></i>
-                </div>
+                ${imageDisplay}
                 <h3>${product.name}</h3>
                 <div class="admin-product-price">${product.price.toFixed(2)}€</div>
                 <div class="admin-product-category">${product.category === 'tshirts' ? 'T-shirts' : 'Accessoires'}</div>
+                ${product.description ? `<p style="margin: 5px 0; color: #666; font-size: 0.9em; text-align: center;">${product.description}</p>` : ''}
             </div>
             <div class="admin-product-actions">
                 <button class="btn-icon btn-edit" onclick="editProduct(${id})" title="Modifier">
