@@ -12,6 +12,14 @@ document.addEventListener('DOMContentLoaded', function() {
     setTimeout(() => {
         initializeDashboard();
     }, 100);
+    
+    // Écouter les événements de mise à jour des produits
+    window.addEventListener('productsUpdated', function() {
+        console.log('Products updated event received, refreshing admin list...');
+        setTimeout(() => {
+            refreshProductsList();
+        }, 200);
+    });
 });
 
 // Check if user has admin access
@@ -552,13 +560,30 @@ function getProducts() {
 }
 // Save products to localStorage
 function saveProducts(products) {
-    console.log('Saving products:', products);
-    localStorage.setItem('maspalegryProducts', JSON.stringify(products));
-    window.products = products;
-    localStorage.setItem('maspalegryProductsLastUpdate', Date.now().toString());
-    
-    // Déclencher l'événement de rechargement des produits
-    window.dispatchEvent(new Event('productsUpdated'));
+    try {
+        console.log('Saving products to localStorage...', Object.keys(products).length, 'products');
+        localStorage.setItem('maspalegryProducts', JSON.stringify(products));
+        window.products = products; // Mettre à jour la variable globale
+        localStorage.setItem('maspalegryProductsLastUpdate', Date.now().toString());
+        
+        console.log('Products saved to localStorage, triggering update event');
+        
+        // Déclencher l'événement de mise à jour
+        const event = new CustomEvent('productsUpdated', { 
+            detail: { products: products, source: 'admin' } 
+        });
+        window.dispatchEvent(event);
+        
+        // Utiliser la nouvelle fonction de synchronisation
+        setTimeout(() => {
+            forceSyncProducts();
+        }, 50);
+        
+        return true;
+    } catch (error) {
+        console.error('Erreur lors de la sauvegarde :', error);
+        return false;
+    }
 }
 // Load and display products list
 function loadProductsList() {
@@ -567,6 +592,31 @@ function loadProductsList() {
 }
 
 // Fonction pour recharger les produits depuis localStorage (utilise main.js)
+// Fonction pour forcer la synchronisation entre admin et index
+function forceSyncProducts() {
+    console.log('Forcing products synchronization...');
+    
+    // Recharger les produits depuis localStorage
+    const products = getProducts();
+    console.log('Current products in localStorage:', Object.keys(products).length);
+    
+    // Mettre à jour la variable globale
+    window.products = products;
+    
+    // Déclencher un événement pour notifier les autres scripts
+    const event = new CustomEvent('productsSynced', { 
+        detail: { products: products, timestamp: Date.now() } 
+    });
+    window.dispatchEvent(event);
+    
+    // Forcer le rafraîchissement de l'affichage
+    if (typeof generateProductCards === 'function') {
+        generateProductCards();
+    }
+    
+    console.log('Products synchronization completed');
+}
+
 function refreshProductsList() {
     console.log('Refreshing products list...');
     const container = document.getElementById('admin-products-list');
@@ -717,9 +767,21 @@ function saveProduct(event) {
         showMessage(`Produit "${productData.name}" ajouté avec succès!`, 'success');
     }
 
-    saveProducts(products);
-    refreshProductsList();
-    closeProductModal();
+    // Sauvegarder et synchroniser (forceSyncProducts est appelé dans saveProducts)
+    const saveSuccess = saveProducts(products);
+    
+    if (saveSuccess) {
+        console.log('Product saved successfully, closing modal');
+        closeProductModal();
+        
+        // Optionnel : petit délai pour la synchronisation visuelle
+        setTimeout(() => {
+            console.log('Sync completed after product save');
+        }, 200);
+    } else {
+        console.error('Failed to save product');
+        showMessage('Erreur lors de la sauvegarde du produit', 'error');
+    }
 
     // Refresh dashboard if needed
     if (productId) {

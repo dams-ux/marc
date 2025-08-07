@@ -36,6 +36,22 @@ document.addEventListener('DOMContentLoaded', function() {
             });
         }
     }, 1000); // Vérifier toutes les secondes
+    
+    // Écouter les événements personnalisés de mise à jour des produits
+    window.addEventListener('productsUpdated', function(event) {
+        console.log('Products updated event received in main.js');
+        loadProducts().then(() => {
+            generateProductCards();
+        });
+    });
+    
+    window.addEventListener('productsSynced', function(event) {
+        console.log('Products synced event received in main.js');
+        if (event.detail?.products) {
+            products = event.detail.products;
+            generateProductCards();
+        }
+    });
 });
 
 // Check if admin is logged in and show logout button
