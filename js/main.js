@@ -3,12 +3,101 @@ let cart = [];
 let cartCount = 0;
 let products = {};
 
+// User session management
+let currentUserId = null;
+const USER_SESSION_DURATION = 24 * 60 * 60 * 1000; // 24 heures
+
 // Admin session management
 let adminInactivityTimer;
 const ADMIN_SESSION_DURATION = 5 * 60 * 1000; // 5 minutes en millisecondes
 
+// Fonction pour générer un ID utilisateur unique
+function generateUserId() {
+    return 'user_' + Date.now() + '_' + Math.random().toString(36).substr(2, 9);
+}
+
+// Fonction pour obtenir ou créer une session utilisateur
+function getUserSession() {
+    // Vérifier s'il y a une session existante
+    const existingSession = sessionStorage.getItem('maspalegryUserSession');
+    const sessionTimestamp = sessionStorage.getItem('maspalegryUserSessionTimestamp');
+    
+    if (existingSession && sessionTimestamp) {
+        const now = Date.now();
+        const sessionTime = parseInt(sessionTimestamp);
+        
+        // Vérifier si la session est encore valide (24 heures)
+        if (now - sessionTime < USER_SESSION_DURATION) {
+            currentUserId = existingSession;
+            console.log('Session utilisateur existante trouvée:', currentUserId);
+            return currentUserId;
+        }
+    }
+    
+    // Créer une nouvelle session utilisateur
+    currentUserId = generateUserId();
+    sessionStorage.setItem('maspalegryUserSession', currentUserId);
+    sessionStorage.setItem('maspalegryUserSessionTimestamp', Date.now().toString());
+    console.log('Nouvelle session utilisateur créée:', currentUserId);
+    return currentUserId;
+}
+
+// Fonction pour obtenir le panier de l'utilisateur actuel
+function getUserCart() {
+    const cartKey = `maspalegryCart_${currentUserId}`;
+    const savedCart = localStorage.getItem(cartKey);
+    return savedCart ? JSON.parse(savedCart) : [];
+}
+
+// Fonction pour sauvegarder le panier de l'utilisateur actuel
+function saveUserCart() {
+    const cartKey = `maspalegryCart_${currentUserId}`;
+    localStorage.setItem(cartKey, JSON.stringify(cart));
+    console.log('Panier sauvegardé pour utilisateur:', currentUserId, cart);
+}
+
+// Fonction pour afficher l'ID de session utilisateur (pour debug)
+function showUserSession() {
+    if (window.location.search.includes('debug=true')) {
+        const sessionInfo = document.createElement('div');
+        sessionInfo.id = 'user-session-info';
+        sessionInfo.style.cssText = `
+            position: fixed;
+            bottom: 10px;
+            right: 10px;
+            background: rgba(0,0,0,0.8);
+            color: white;
+            padding: 8px 12px;
+            border-radius: 5px;
+            font-size: 12px;
+            z-index: 10000;
+            font-family: monospace;
+        `;
+        sessionInfo.textContent = `Session: ${currentUserId.substr(-8)}`;
+        document.body.appendChild(sessionInfo);
+    }
+}
+
+// Fonction pour vider le panier de l'utilisateur actuel
+function clearUserCart() {
+    cart = [];
+    updateCartDisplay();
+    saveUserCart();
+    showNotification('Panier vidé!', 'info');
+}
+
 // Initialize admin session management
 document.addEventListener('DOMContentLoaded', function() {
+    // Initialiser la session utilisateur
+    getUserSession();
+    
+    // Charger le panier de l'utilisateur
+    cart = getUserCart();
+    updateCartDisplay();
+    
+    // Afficher l'info de session si en mode debug
+    showUserSession();
+    
     checkAdminSession();
     resetAdminInactivityTimer();
     
@@ -201,7 +290,6 @@ document.addEventListener('DOMContentLoaded', async function() {
     updateCartDisplay();
     setupFilterButtons();
     setupCartModal();
-    loadCartFromStorage();
     setupAdminAccess();
     generateProductCards();
 });
@@ -552,7 +640,7 @@ function addToCart(id, name, price) {
     }
     
     updateCartDisplay();
-    saveCartToStorage();
+    saveUserCart(); // Utiliser la nouvelle fonction de sauvegarde utilisateur
     showCartNotification(name);
     
     // Save sale data for admin dashboard
@@ -691,7 +779,7 @@ function closeCart() {
 function removeFromCart(id) {
     cart = cart.filter(item => item.id !== id);
     updateCartDisplay();
-    saveCartToStorage();
+    saveUserCart(); // Utiliser la nouvelle fonction de sauvegarde utilisateur
     openCart(); // Refresh the cart display
 }
 
@@ -706,20 +794,6 @@ function checkout() {
     window.location.href = 'checkout.html';
 }
 
-// Save cart to localStorage
-function saveCartToStorage() {
-    localStorage.setItem('maspalegryCart', JSON.stringify(cart));
-}
-
-// Load cart from localStorage
-function loadCartFromStorage() {
-    const savedCart = localStorage.getItem('maspalegryCart');
-    if (savedCart) {
-        cart = JSON.parse(savedCart);
-        updateCartDisplay();
-    }
-}
-
 // Save sale data for admin dashboard
 function saveSaleData(productId, productName, price) {
     const salesData = JSON.parse(localStorage.getItem('maspalegrySales') || '[]');
@@ -731,7 +805,8 @@ function saveSaleData(productId, productName, price) {
         productName: productName,
         price: price,
         date: today,
-        timestamp: new Date().toISOString()
+        timestamp: new Date().toISOString(),
+        userId: currentUserId // Ajouter l'ID utilisateur pour le tracking
     });
     
     localStorage.setItem('maspalegrySales', JSON.stringify(salesData));
