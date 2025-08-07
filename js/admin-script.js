@@ -595,40 +595,14 @@ function refreshProductsList() {
         container.innerHTML = '';
         Object.keys(products).forEach(id => {
             const product = products[id];
-            const productCard = createAdminProductCard(id, product);
-            container.appendChild(productCard);
+            // Utiliser la fonction de main.js qui prend (container, id, product)
+            if (typeof createAdminProductCard === 'function') {
+                createAdminProductCard(container, id, product);
+            } else {
+                console.error('createAdminProductCard function not available');
+            }
         });
     }
-}
-
-// Fonction fallback pour créer une carte produit admin
-function createAdminProductCard(id, product) {
-    const card = document.createElement('div');
-    card.className = 'product-card';
-    
-    const imageHtml = product.images && product.images.front ? 
-        `<img src="${product.images.front}" alt="${product.name}" class="product-image">` : 
-        `<div class="product-icon"><i class="${product.icon || 'fas fa-box'}"></i></div>`;
-    
-    card.innerHTML = `
-        ${imageHtml}
-        <div class="product-info">
-            <h3 class="product-title">${product.name}</h3>
-            <p class="product-price">${product.price}€</p>
-            <p class="product-category">${product.category === 'tshirts' ? 'T-shirts' : 'Accessoires'}</p>
-            ${product.description ? `<p class="product-description">${product.description}</p>` : ''}
-        </div>
-        <div class="product-actions">
-            <button onclick="editProduct(${id})" class="btn btn-edit" title="Modifier">
-                <i class="fas fa-edit"></i>
-            </button>
-            <button onclick="deleteProduct(${id})" class="btn btn-delete" title="Supprimer">
-                <i class="fas fa-trash"></i>
-            </button>
-        </div>
-    `;
-    
-    return card;
 }
 
 // Open add product modal

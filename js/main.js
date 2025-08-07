@@ -554,7 +554,10 @@ function addToCart(id, name, price) {
 // Update cart display
 function updateCartDisplay() {
     cartCount = cart.reduce((total, item) => total + item.quantity, 0);
-    document.querySelector('.cart-count').textContent = cartCount;
+    const cartCountElement = document.querySelector('.cart-count');
+    if (cartCountElement) {
+        cartCountElement.textContent = cartCount;
+    }
 }
 
 // Show cart notification
