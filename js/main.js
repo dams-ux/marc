@@ -105,6 +105,8 @@ document.addEventListener('DOMContentLoaded', function() {
     loadProducts().then(() => {
         generateProductCards();
         setupFilterButtons();
+        setupCartModal();
+        setupAdminAccess();
     });
     
     // Reset timer on user activity
@@ -285,14 +287,7 @@ function showNotification(message, type = 'info') {
 }
 
 // Initialize the application
-document.addEventListener('DOMContentLoaded', async function() {
-    await loadProducts();
-    updateCartDisplay();
-    setupFilterButtons();
-    setupCartModal();
-    setupAdminAccess();
-    generateProductCards();
-});
+// Note: Initialization is handled by the main DOMContentLoaded listener above
 
 // Load products from localStorage or use defaults
 async function loadProducts() {
@@ -693,26 +688,38 @@ function showCartNotification(itemName) {
 
 // Setup filter buttons
 function setupFilterButtons() {
+    console.log('Setting up filter buttons...');
     const filterButtons = document.querySelectorAll('.filter-btn');
     const productCards = document.querySelectorAll('.product-card');
     
+    console.log('Found', filterButtons.length, 'filter buttons and', productCards.length, 'product cards');
+    
     filterButtons.forEach(button => {
         button.addEventListener('click', () => {
+            console.log('Filter button clicked:', button.getAttribute('data-filter'));
+            
             // Remove active class from all buttons
             filterButtons.forEach(btn => btn.classList.remove('active'));
             // Add active class to clicked button
             button.classList.add('active');
             
             const filter = button.getAttribute('data-filter');
+            let visibleCount = 0;
             
             productCards.forEach(card => {
-                if (filter === 'all' || card.getAttribute('data-category') === filter) {
+                const cardCategory = card.getAttribute('data-category');
+                console.log('Card category:', cardCategory, 'Filter:', filter);
+                
+                if (filter === 'all' || cardCategory === filter) {
                     card.style.display = 'block';
                     card.style.animation = 'fadeInUp 0.5s ease';
+                    visibleCount++;
                 } else {
                     card.style.display = 'none';
                 }
             });
+            
+            console.log('Visible cards after filtering:', visibleCount);
         });
     });
 }
