@@ -49,16 +49,31 @@ function initializeDashboard() {
     initializeCharts();
     populateSalesTable();
     
-    // Attendre que window.products soit disponible depuis main.js
+    // Forcer le chargement des produits depuis main.js puis afficher
     const checkProducts = () => {
+        console.log('Checking products availability...');
+        
+        // Essayer de charger depuis localStorage d'abord
+        const storedProducts = getProducts();
+        if (storedProducts && Object.keys(storedProducts).length > 0) {
+            console.log('Products found in localStorage:', storedProducts);
+            window.products = storedProducts;
+            refreshProductsList();
+            return;
+        }
+        
+        // Sinon attendre que main.js charge les produits par défaut
         if (window.products && Object.keys(window.products).length > 0) {
+            console.log('Products found in window.products:', window.products);
             refreshProductsList();
         } else {
-            setTimeout(checkProducts, 100);
+            console.log('Products not ready yet, retrying...');
+            setTimeout(checkProducts, 200);
         }
     };
     
-    checkProducts();
+    // Démarrer la vérification avec un petit délai pour laisser main.js se charger
+    setTimeout(checkProducts, 100);
 
     // Show a welcome message if no data exists
     const salesData = getSalesData();
@@ -565,14 +580,11 @@ function refreshProductsList() {
     window.products = products;
     
     if (!products || Object.keys(products).length === 0) {
-        container.innerHTML = '<p style="text-align: center; color: #666; padding: 40px;">Chargement des produits...</p>';
+        container.innerHTML = '<p style="text-align: center; color: #666; padding: 40px;">Aucun produit trouvé. Utilisez le bouton "Ajouter un Produit" pour commencer.</p>';
         return;
     }
     
     console.log('Products to display:', products);
-    
-    // Vider le container
-    container.innerHTML = '';
     
     // Utiliser generateProductCards de main.js qui gère déjà l'admin
     if (typeof generateProductCards === 'function') {
@@ -580,6 +592,7 @@ function refreshProductsList() {
     } else {
         // Fallback si generateProductCards n'est pas disponible
         console.warn('generateProductCards not available, using fallback');
+        container.innerHTML = '';
         Object.keys(products).forEach(id => {
             const product = products[id];
             const productCard = createAdminProductCard(id, product);
