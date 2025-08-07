@@ -1176,3 +1176,65 @@ body {
         text-align: center;
     }
 }
+
+/* Admin product actions buttons - Responsive */
+.admin-product-actions {
+    display: flex;
+    justify-content: center;
+    gap: 10px;
+    padding: 10px;
+    border-top: 1px solid #eee;
+    margin-top: 10px;
+}
+
+.btn-icon {
+    background: none;
+    border: 2px solid #ddd;
+    padding: 8px;
+    border-radius: 50%;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 40px;
+    height: 40px;
+}
+
+.btn-edit {
+    border-color: #3498db;
+    color: #3498db;
+}
+
+.btn-edit:hover {
+    background: #3498db;
+    color: white;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 8px rgba(52, 152, 219, 0.3);
+}
+
+.btn-delete {
+    border-color: #e74c3c;
+    color: #e74c3c;
+}
+
+.btn-delete:hover {
+    background: #e74c3c;
+    color: white;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 8px rgba(231, 76, 60, 0.3);
+}
+
+/* Responsive admin buttons */
+@media (max-width: 768px) {
+    .admin-product-actions {
+        padding: 15px 10px;
+        gap: 15px;
+    }
+    
+    .btn-icon {
+        width: 44px;
+        height: 44px;
+        padding: 10px;
+    }
+}

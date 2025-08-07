@@ -81,6 +81,32 @@
             border-color: #1E90FF;
         }
         
+        .password-input-container {
+            position: relative;
+        }
+        
+        .password-toggle {
+            position: absolute;
+            right: 15px;
+            top: 50%;
+            transform: translateY(-50%);
+            background: none;
+            border: none;
+            color: #7f8c8d;
+            cursor: pointer;
+            padding: 5px;
+            font-size: 1rem;
+            transition: color 0.3s ease;
+        }
+        
+        .password-toggle:hover {
+            color: #1E90FF;
+        }
+        
+        .password-input-container input {
+            padding-right: 50px;
+        }
+        
         .login-btn {
             width: 100%;
             background: linear-gradient(135deg, #FF4500 0%, #1E90FF 100%);
@@ -138,7 +164,12 @@
             
             <div class="form-group">
                 <label for="password">Mot de passe</label>
-                <input type="password" id="password" name="password" required>
+                <div class="password-input-container">
+                    <input type="password" id="password" name="password" required>
+                    <button type="button" class="password-toggle" onclick="togglePassword()" title="Afficher/Masquer le mot de passe">
+                        <i class="fas fa-eye" id="password-toggle-icon"></i>
+                    </button>
+                </div>
             </div>
             
             <button type="submit" class="login-btn">
@@ -196,6 +227,22 @@
                 setTimeout(() => {
                     document.querySelector('.login-container').style.animation = '';
                 }, 500);
+            }
+        }
+        
+        // Function to toggle password visibility
+        function togglePassword() {
+            const passwordInput = document.getElementById('password');
+            const toggleIcon = document.getElementById('password-toggle-icon');
+            
+            if (passwordInput.type === 'password') {
+                passwordInput.type = 'text';
+                toggleIcon.classList.remove('fa-eye');
+                toggleIcon.classList.add('fa-eye-slash');
+            } else {
+                passwordInput.type = 'password';
+                toggleIcon.classList.remove('fa-eye-slash');
+                toggleIcon.classList.add('fa-eye');
             }
         }
         
