@@ -537,9 +537,13 @@ function getProducts() {
 }
 // Save products to localStorage
 function saveProducts(products) {
+    console.log('Saving products:', products);
     localStorage.setItem('maspalegryProducts', JSON.stringify(products));
     window.products = products;
     localStorage.setItem('maspalegryProductsLastUpdate', Date.now().toString());
+    
+    // Déclencher l'événement de rechargement des produits
+    window.dispatchEvent(new Event('productsUpdated'));
 }
 // Load and display products list
 function loadProductsList() {
@@ -549,17 +553,23 @@ function loadProductsList() {
 
 // Fonction pour recharger les produits depuis localStorage (utilise main.js)
 function refreshProductsList() {
+    console.log('Refreshing products list...');
     const container = document.getElementById('admin-products-list');
     if (!container) {
         console.error('Container admin-products-list non trouvé !');
         return;
     }
     
-    // Utiliser la variable products de main.js
-    if (!window.products || Object.keys(window.products).length === 0) {
+    // S'assurer qu'on a les derniers produits depuis localStorage
+    const products = getProducts();
+    window.products = products;
+    
+    if (!products || Object.keys(products).length === 0) {
         container.innerHTML = '<p style="text-align: center; color: #666; padding: 40px;">Chargement des produits...</p>';
         return;
     }
+    
+    console.log('Products to display:', products);
     
     // Vider le container
     container.innerHTML = '';
@@ -568,8 +578,44 @@ function refreshProductsList() {
     if (typeof generateProductCards === 'function') {
         generateProductCards();
     } else {
-        console.error('generateProductCards function not available');
+        // Fallback si generateProductCards n'est pas disponible
+        console.warn('generateProductCards not available, using fallback');
+        Object.keys(products).forEach(id => {
+            const product = products[id];
+            const productCard = createAdminProductCard(id, product);
+            container.appendChild(productCard);
+        });
     }
+}
+
+// Fonction fallback pour créer une carte produit admin
+function createAdminProductCard(id, product) {
+    const card = document.createElement('div');
+    card.className = 'product-card';
+    
+    const imageHtml = product.images && product.images.front ? 
+        `<img src="${product.images.front}" alt="${product.name}" class="product-image">` : 
+        `<div class="product-icon"><i class="${product.icon || 'fas fa-box'}"></i></div>`;
+    
+    card.innerHTML = `
+        ${imageHtml}
+        <div class="product-info">
+            <h3 class="product-title">${product.name}</h3>
+            <p class="product-price">${product.price}€</p>
+            <p class="product-category">${product.category === 'tshirts' ? 'T-shirts' : 'Accessoires'}</p>
+            ${product.description ? `<p class="product-description">${product.description}</p>` : ''}
+        </div>
+        <div class="product-actions">
+            <button onclick="editProduct(${id})" class="btn btn-edit" title="Modifier">
+                <i class="fas fa-edit"></i>
+            </button>
+            <button onclick="deleteProduct(${id})" class="btn btn-delete" title="Supprimer">
+                <i class="fas fa-trash"></i>
+            </button>
+        </div>
+    `;
+    
+    return card;
 }
 
 // Open add product modal
@@ -647,12 +693,24 @@ function saveProduct(event) {
         description: formData.get('description') || ''
     };
 
-    // Récupérer les images si elles existent
+    // Gestion des images - récupérer les images actuelles dans les previews
     const frontImg = document.querySelector('#preview-front img');
     const backImg = document.querySelector('#preview-back img');
     
-    if (frontImg || backImg) {
-        productData.images = {};
+    // Si on modifie un produit existant, partir de ses images existantes
+    if (productId) {
+        const existingProduct = products[productId];
+        if (existingProduct.images) {
+            productData.images = { ...existingProduct.images };
+        }
+    }
+    
+    // Mettre à jour avec les nouvelles images si elles existent
+    if (frontImg || backImg || productData.images) {
+        if (!productData.images) {
+            productData.images = {};
+        }
+        
         if (frontImg) {
             productData.images.front = frontImg.src;
         }
@@ -662,11 +720,7 @@ function saveProduct(event) {
     }
 
     if (productId) {
-        // Edit existing product - conserver les images existantes si pas de nouvelles
-        const existingProduct = products[productId];
-        if (existingProduct.images && !productData.images) {
-            productData.images = existingProduct.images;
-        }
+        // Edit existing product
         products[productId] = productData;
         showMessage(`Produit "${productData.name}" modifié avec succès!`, 'success');
     } else {
