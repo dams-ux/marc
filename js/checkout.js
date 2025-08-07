@@ -60,7 +60,10 @@ function selectPaymentMethod(method) {
     methods.forEach(m => m.classList.remove('selected'));
     
     // Add selected class to clicked method
-    event.target.closest('.payment-method').classList.add('selected');
+    const selectedMethod = document.querySelector(`[data-method="${method}"]`);
+    if (selectedMethod) {
+        selectedMethod.classList.add('selected');
+    }
     
     // Set the selected method
     selectedPaymentMethod = method;
