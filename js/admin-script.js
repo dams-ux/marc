@@ -1,17 +1,7 @@
 // Admin Dashboard JavaScript
 let salesChart, productsChart, categoryChart, revenueChart;
 let currentTimeRange = 30;
-// Product catalog for reference
-const products = {
-    1: { name: 'T-shirt Pilot Wings', category: 'tshirts' },
-    2: { name: 'T-shirt Cessna Vintage', category: 'tshirts' },
-    3: { name: 'T-shirt Boeing 747', category: 'tshirts' },
-    4: { name: 'Casquette Pilote', category: 'accessories' },
-    5: { name: 'Boussole Aviation', category: 'accessories' },
-    6: { name: 'Porte-clés Avion', category: 'accessories' },
-    7: { name: 'T-shirt Spitfire', category: 'tshirts' },
-    8: { name: 'Badge Pilote', category: 'accessories' }
-};
+
 // Initialize dashboard
 document.addEventListener('DOMContentLoaded', function() {
     console.log('DOM loaded, checking admin access');
@@ -525,18 +515,9 @@ function showMessage(text, type = 'info') {
 }
 // Products Management Functions
 let productToDelete = null;
-// Get products from localStorage
+// Get products from main.js (unified system)
 function getProducts() {
-    return JSON.parse(localStorage.getItem('maspalegryProducts')) || {
-        1: { name: 'T-shirt Pilot Wings', category: 'tshirts', price: 25.99, icon: 'fas fa-tshirt' },
-        2: { name: 'T-shirt Cessna Vintage', category: 'tshirts', price: 24.99, icon: 'fas fa-tshirt' },
-        3: { name: 'T-shirt Boeing 747', category: 'tshirts', price: 26.99, icon: 'fas fa-tshirt' },
-        4: { name: 'Casquette Pilote', category: 'accessories', price: 19.99, icon: 'fas fa-user-pilot' },
-        5: { name: 'Boussole Aviation', category: 'accessories', price: 35.99, icon: 'fas fa-compass' },
-        6: { name: 'Porte-clés Avion', category: 'accessories', price: 12.99, icon: 'fas fa-key' },
-        7: { name: 'T-shirt Spitfire', category: 'tshirts', price: 27.99, icon: 'fas fa-tshirt' },
-        8: { name: 'Badge Pilote', category: 'accessories', price: 15.99, icon: 'fas fa-medal' }
-    };
+    return window.products || {};
 }
 // Save products to localStorage
 function saveProducts(products) {
