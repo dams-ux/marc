@@ -44,14 +44,6 @@ document.addEventListener('DOMContentLoaded', function() {
             generateProductCards();
         });
     });
-    
-    window.addEventListener('productsSynced', function(event) {
-        console.log('Products synced event received in main.js');
-        if (event.detail?.products) {
-            products = event.detail.products;
-            generateProductCards();
-        }
-    });
 });
 
 // Check if admin is logged in and show logout button

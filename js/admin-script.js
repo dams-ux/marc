@@ -1,6 +1,7 @@
 // Admin Dashboard JavaScript
 let salesChart, productsChart, categoryChart, revenueChart;
 let currentTimeRange = 30;
+let isInitialized = false;
 
 // Initialize dashboard
 document.addEventListener('DOMContentLoaded', function() {
@@ -8,19 +9,26 @@ document.addEventListener('DOMContentLoaded', function() {
     checkAdminAccess();
     console.log('Initializing dashboard...');
     
-    // Attendre que main.js charge les produits, puis initialiser l'admin
-    setTimeout(() => {
-        initializeDashboard();
-    }, 100);
-    
-    // Écouter les événements de mise à jour des produits
-    window.addEventListener('productsUpdated', function() {
-        console.log('Products updated event received, refreshing admin list...');
+    // Éviter la double initialisation
+    if (!isInitialized) {
+        isInitialized = true;
+        
+        // Attendre que main.js charge les produits, puis initialiser l'admin
         setTimeout(() => {
-            refreshProductsList();
-        }, 200);
-    });
+            initializeDashboard();
+        }, 100);
+        
+        // Écouter les événements de mise à jour des produits - une seule fois
+        window.addEventListener('productsUpdated', handleProductsUpdate);
+    }
 });
+
+// Fonction séparée pour gérer les mises à jour
+function handleProductsUpdate() {
+    console.log('Products updated event received, refreshing admin list...');
+    // Supprimer le setTimeout qui peut causer des conflits
+    refreshProductsList();
+}
 
 // Check if user has admin access
 function checkAdminAccess() {
@@ -566,18 +574,10 @@ function saveProducts(products) {
         window.products = products; // Mettre à jour la variable globale
         localStorage.setItem('maspalegryProductsLastUpdate', Date.now().toString());
         
-        console.log('Products saved to localStorage, triggering update event');
+        console.log('Products saved to localStorage successfully');
         
-        // Déclencher l'événement de mise à jour
-        const event = new CustomEvent('productsUpdated', { 
-            detail: { products: products, source: 'admin' } 
-        });
-        window.dispatchEvent(event);
-        
-        // Utiliser la nouvelle fonction de synchronisation
-        setTimeout(() => {
-            forceSyncProducts();
-        }, 50);
+        // Synchronisation simple et directe - pas d'événements en cascade
+        refreshProductsList();
         
         return true;
     } catch (error) {
@@ -592,31 +592,7 @@ function loadProductsList() {
 }
 
 // Fonction pour recharger les produits depuis localStorage (utilise main.js)
-// Fonction pour forcer la synchronisation entre admin et index
-function forceSyncProducts() {
-    console.log('Forcing products synchronization...');
-    
-    // Recharger les produits depuis localStorage
-    const products = getProducts();
-    console.log('Current products in localStorage:', Object.keys(products).length);
-    
-    // Mettre à jour la variable globale
-    window.products = products;
-    
-    // Déclencher un événement pour notifier les autres scripts
-    const event = new CustomEvent('productsSynced', { 
-        detail: { products: products, timestamp: Date.now() } 
-    });
-    window.dispatchEvent(event);
-    
-    // Forcer le rafraîchissement de l'affichage
-    if (typeof generateProductCards === 'function') {
-        generateProductCards();
-    }
-    
-    console.log('Products synchronization completed');
-}
-
+// Fonction pour recharger les produits depuis localStorage (utilise main.js)
 function refreshProductsList() {
     console.log('Refreshing products list...');
     const container = document.getElementById('admin-products-list');
@@ -634,24 +610,15 @@ function refreshProductsList() {
         return;
     }
     
-    console.log('Products to display:', products);
+    console.log('Products to display:', Object.keys(products).length, 'products');
     
-    // Utiliser generateProductCards de main.js qui gère déjà l'admin
+    // Vider le container et utiliser generateProductCards de main.js
+    container.innerHTML = '';
     if (typeof generateProductCards === 'function') {
         generateProductCards();
+        console.log('Products list refreshed successfully');
     } else {
-        // Fallback si generateProductCards n'est pas disponible
-        console.warn('generateProductCards not available, using fallback');
-        container.innerHTML = '';
-        Object.keys(products).forEach(id => {
-            const product = products[id];
-            // Utiliser la fonction de main.js qui prend (container, id, product)
-            if (typeof createAdminProductCard === 'function') {
-                createAdminProductCard(container, id, product);
-            } else {
-                console.error('createAdminProductCard function not available');
-            }
-        });
+        console.error('generateProductCards function not available');
     }
 }
 
@@ -783,7 +750,7 @@ function saveProduct(event) {
 
     console.log('Products before save:', Object.keys(products).length);
     
-    // Sauvegarder et synchroniser (forceSyncProducts est appelé dans saveProducts)
+    // Sauvegarder (refreshProductsList est maintenant appelé dans saveProducts)
     const saveSuccess = saveProducts(products);
     
     console.log('Save success:', saveSuccess);
@@ -791,11 +758,6 @@ function saveProduct(event) {
     if (saveSuccess) {
         console.log('Product saved successfully, closing modal');
         closeProductModal();
-        
-        // Optionnel : petit délai pour la synchronisation visuelle
-        setTimeout(() => {
-            console.log('Sync completed after product save');
-        }, 200);
     } else {
         console.error('Failed to save product');
         showMessage('Erreur lors de la sauvegarde du produit', 'error');
