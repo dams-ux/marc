@@ -716,11 +716,20 @@ function editProduct(id) {
 }
 // Save product (add or edit)
 function saveProduct(event) {
+    console.log('saveProduct called with event:', event);
     event.preventDefault();
 
     const formData = new FormData(event.target);
     const productId = document.getElementById('product-id').value;
     const products = getProducts();
+    
+    console.log('Form data:', {
+        name: formData.get('name'),
+        price: formData.get('price'),
+        category: formData.get('category'),
+        productId: productId,
+        productsCount: Object.keys(products).length
+    });
 
     const productData = {
         name: formData.get('name'),
@@ -729,6 +738,8 @@ function saveProduct(event) {
         icon: formData.get('icon') || 'fas fa-box',
         description: formData.get('description') || ''
     };
+    
+    console.log('Product data created:', productData);
 
     // Gestion des images - récupérer les images actuelles dans les previews
     const frontImg = document.querySelector('#preview-front img');
@@ -758,17 +769,24 @@ function saveProduct(event) {
 
     if (productId) {
         // Edit existing product
+        console.log('Editing existing product with ID:', productId);
         products[productId] = productData;
         showMessage(`Produit "${productData.name}" modifié avec succès!`, 'success');
     } else {
         // Add new product
-        const newId = Math.max(...Object.keys(products).map(Number)) + 1;
+        const existingIds = Object.keys(products).map(Number).filter(id => !isNaN(id));
+        const newId = existingIds.length > 0 ? Math.max(...existingIds) + 1 : 1;
+        console.log('Adding new product with ID:', newId, 'Existing IDs:', existingIds);
         products[newId] = productData;
         showMessage(`Produit "${productData.name}" ajouté avec succès!`, 'success');
     }
 
+    console.log('Products before save:', Object.keys(products).length);
+    
     // Sauvegarder et synchroniser (forceSyncProducts est appelé dans saveProducts)
     const saveSuccess = saveProducts(products);
+    
+    console.log('Save success:', saveSuccess);
     
     if (saveSuccess) {
         console.log('Product saved successfully, closing modal');
