@@ -1,0 +1,285 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Restauration des Modifications</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 900px;
+            margin: 20px auto;
+            padding: 20px;
+            background: #f8f9fa;
+        }
+        .container {
+            background: white;
+            padding: 30px;
+            border-radius: 15px;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.1);
+        }
+        .alert {
+            padding: 15px;
+            margin: 15px 0;
+            border-radius: 8px;
+            font-weight: bold;
+        }
+        .alert-success {
+            background: #d4edda;
+            color: #155724;
+            border: 1px solid #c3e6cb;
+        }
+        .alert-warning {
+            background: #fff3cd;
+            color: #856404;
+            border: 1px solid #ffeaa7;
+        }
+        .alert-error {
+            background: #f8d7da;
+            color: #721c24;
+            border: 1px solid #f5c6cb;
+        }
+        button {
+            background: linear-gradient(135deg, #FF4500 0%, #1E90FF 100%);
+            color: white;
+            border: none;
+            padding: 12px 24px;
+            border-radius: 8px;
+            cursor: pointer;
+            margin: 10px 5px;
+            font-weight: bold;
+        }
+        button:hover {
+            opacity: 0.9;
+        }
+        .data-section {
+            background: #f8f9fa;
+            padding: 20px;
+            border-radius: 8px;
+            margin: 20px 0;
+            border-left: 4px solid #1E90FF;
+        }
+        textarea {
+            width: 100%;
+            height: 200px;
+            padding: 15px;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            font-family: monospace;
+            font-size: 12px;
+        }
+        .nav-links {
+            margin-top: 30px;
+            text-align: center;
+        }
+        .nav-links a {
+            display: inline-block;
+            margin: 0 15px;
+            padding: 10px 20px;
+            background: #6c757d;
+            color: white;
+            text-decoration: none;
+            border-radius: 5px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🔧 Restauration des Modifications</h1>
+        
+        <div class="alert alert-warning">
+            <strong>Important :</strong> Cette page vous aide à vérifier et restaurer vos modifications de produits si elles ont été perdues.
+        </div>
+        
+        <div class="data-section">
+            <h3>📊 État actuel du localStorage</h3>
+            <div id="current-status"></div>
+            <button onclick="checkCurrentData()">🔍 Vérifier les données actuelles</button>
+        </div>
+        
+        <div class="data-section">
+            <h3>💾 Sauvegarde de vos modifications</h3>
+            <p>Si vous avez des modifications importantes, vous pouvez les sauvegarder ici :</p>
+            <textarea id="backup-data" placeholder="Les données apparaîtront ici..."></textarea>
+            <br>
+            <button onclick="exportData()">📤 Exporter les données</button>
+            <button onclick="importData()">📥 Importer des données</button>
+        </div>
+        
+        <div class="data-section">
+            <h3>🛠️ Actions de restauration</h3>
+            <button onclick="addTestProduct()">➕ Ajouter un produit test</button>
+            <button onclick="modifyFirstProduct()">✏️ Modifier le premier produit</button>
+            <button onclick="forceReload()">🔄 Forcer rechargement admin</button>
+            <button onclick="clearAndRestore()">🗑️ Reset complet</button>
+        </div>
+        
+        <div id="messages"></div>
+        
+        <div class="nav-links">
+            <a href="index.html">🏠 Index</a>
+            <a href="admin.html">⚙️ Admin</a>
+            <a href="test-persistence.html">🧪 Test Persistance</a>
+        </div>
+    </div>
+
+    <script>
+        function addMessage(text, type = 'success') {
+            const messages = document.getElementById('messages');
+            const div = document.createElement('div');
+            div.className = `alert alert-${type}`;
+            div.innerHTML = text;
+            messages.appendChild(div);
+            
+            // Auto-remove after 5 seconds
+            setTimeout(() => {
+                if (div.parentNode) {
+                    div.parentNode.removeChild(div);
+                }
+            }, 5000);
+        }
+
+        function checkCurrentData() {
+            const products = localStorage.getItem('maspalegryProducts');
+            const lastUpdate = localStorage.getItem('maspalegryProductsLastUpdate');
+            const status = document.getElementById('current-status');
+            
+            if (products) {
+                const parsed = JSON.parse(products);
+                const count = Object.keys(parsed).length;
+                const withImages = Object.values(parsed).filter(p => p.images).length;
+                
+                status.innerHTML = `
+                    <div class="alert alert-success">
+                        ✅ ${count} produits trouvés<br>
+                        🖼️ ${withImages} avec images personnalisées<br>
+                        🕒 Dernière MAJ: ${lastUpdate ? new Date(parseInt(lastUpdate)).toLocaleString() : 'Inconnue'}
+                    </div>
+                `;
+                
+                document.getElementById('backup-data').value = JSON.stringify(parsed, null, 2);
+            } else {
+                status.innerHTML = '<div class="alert alert-error">❌ Aucune donnée trouvée</div>';
+            }
+        }
+
+        function exportData() {
+            const data = document.getElementById('backup-data').value;
+            if (!data) {
+                addMessage('Aucune donnée à exporter', 'error');
+                return;
+            }
+            
+            const blob = new Blob([data], { type: 'application/json' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = `maspalegry-products-${Date.now()}.json`;
+            a.click();
+            URL.revokeObjectURL(url);
+            
+            addMessage('✅ Données exportées avec succès!');
+        }
+
+        function importData() {
+            const input = document.createElement('input');
+            input.type = 'file';
+            input.accept = '.json';
+            input.onchange = function(e) {
+                const file = e.target.files[0];
+                if (!file) return;
+                
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    try {
+                        const data = JSON.parse(e.target.result);
+                        localStorage.setItem('maspalegryProducts', JSON.stringify(data));
+                        localStorage.setItem('maspalegryProductsLastUpdate', Date.now().toString());
+                        
+                        addMessage('✅ Données importées avec succès!');
+                        checkCurrentData();
+                    } catch (error) {
+                        addMessage('❌ Erreur lors de l\'import: ' + error.message, 'error');
+                    }
+                };
+                reader.readAsText(file);
+            };
+            input.click();
+        }
+
+        function addTestProduct() {
+            const products = JSON.parse(localStorage.getItem('maspalegryProducts') || '{}');
+            const newId = Math.max(...Object.keys(products).map(Number), 0) + 1;
+            
+            products[newId] = {
+                name: `Produit Test ${newId}`,
+                price: 19.99,
+                category: 'tshirts',
+                icon: 'fas fa-tshirt',
+                description: 'Produit ajouté pour tester la persistance - ' + new Date().toLocaleString(),
+                testAdded: true
+            };
+            
+            localStorage.setItem('maspalegryProducts', JSON.stringify(products));
+            localStorage.setItem('maspalegryProductsLastUpdate', Date.now().toString());
+            
+            addMessage(`✅ Produit test ${newId} ajouté avec succès!`);
+            checkCurrentData();
+        }
+
+        function modifyFirstProduct() {
+            const products = JSON.parse(localStorage.getItem('maspalegryProducts') || '{}');
+            const firstId = Object.keys(products)[0];
+            
+            if (!firstId) {
+                addMessage('❌ Aucun produit à modifier', 'error');
+                return;
+            }
+            
+            const originalName = products[firstId].name;
+            products[firstId].name = `${originalName.replace(/ \(Modifié.*\)/, '')} (Modifié ${new Date().toLocaleTimeString()})`;
+            products[firstId].lastModified = new Date().toISOString();
+            
+            localStorage.setItem('maspalegryProducts', JSON.stringify(products));
+            localStorage.setItem('maspalegryProductsLastUpdate', Date.now().toString());
+            
+            addMessage(`✅ Produit ${firstId} modifié avec succès!`);
+            checkCurrentData();
+        }
+
+        function forceReload() {
+            // Update window.products if it exists
+            const products = JSON.parse(localStorage.getItem('maspalegryProducts') || '{}');
+            if (window.products) {
+                window.products = products;
+            }
+            
+            addMessage('🔄 Variables rechargées, allez sur l\'admin pour voir les changements');
+        }
+
+        function clearAndRestore() {
+            if (confirm('Voulez-vous vraiment supprimer toutes les données et restaurer les produits par défaut ?')) {
+                const defaultProducts = {
+                    1: { name: 'T-shirt Pilot Wings', category: 'tshirts', price: 25.99, icon: 'fas fa-tshirt', description: 'T-shirt premium avec design "Pilot Wings" brodé' },
+                    2: { name: 'T-shirt Cessna Vintage', category: 'tshirts', price: 24.99, icon: 'fas fa-tshirt', description: 'T-shirt vintage avec illustration Cessna classic' },
+                    3: { name: 'T-shirt Boeing 747', category: 'tshirts', price: 26.99, icon: 'fas fa-tshirt', description: 'T-shirt avec silhouette Boeing 747 et schéma technique' },
+                    4: { name: 'Casquette Pilote', category: 'accessories', price: 19.99, icon: 'fas fa-user-pilot' },
+                    5: { name: 'Boussole Aviation', category: 'accessories', price: 35.99, icon: 'fas fa-compass' },
+                    6: { name: 'Porte-clés Avion', category: 'accessories', price: 12.99, icon: 'fas fa-key' },
+                    7: { name: 'T-shirt Spitfire', category: 'tshirts', price: 27.99, icon: 'fas fa-tshirt', description: 'T-shirt collector avec Supermarine Spitfire' },
+                    8: { name: 'Badge Pilote', category: 'accessories', price: 15.99, icon: 'fas fa-medal' }
+                };
+                
+                localStorage.setItem('maspalegryProducts', JSON.stringify(defaultProducts));
+                localStorage.setItem('maspalegryProductsLastUpdate', Date.now().toString());
+                
+                addMessage('✅ Produits par défaut restaurés!');
+                checkCurrentData();
+            }
+        }
+
+        // Auto-check on load
+        window.onload = checkCurrentData;
+    </script>
+</body>
+</html>
