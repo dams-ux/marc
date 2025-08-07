@@ -3,23 +3,27 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Aviation Store - T-shirts et Accessoires d'Aviation</title>
-    <link rel="stylesheet" href="style.css">
+    <title>Les Avions du Mas Palegry - T-shirts et Accessoires d'Aviation</title>
+    <link rel="stylesheet" href="css/main.css">
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
 </head>
 <body>
     <!-- Header -->
     <header class="header">
-        <div class="container">
+        <div class="container-nav">
             <div class="nav-brand">
                 <i class="fas fa-plane"></i>
-                <h1>Aviation Store</h1>
+                <h1>Les Avions du Mas Palegry</h1>
             </div>
             <nav class="nav">
                 <a href="#home">Accueil</a>
                 <a href="#products">Produits</a>
                 <a href="#about">À propos</a>
                 <a href="#contact">Contact</a>
+                <a href="login.html" class="admin-link hidden">
+                    <i class="fas fa-user-shield"></i>
+                    Admin
+                </a>
             </nav>
             <div class="cart-icon">
                 <i class="fas fa-shopping-cart"></i>
@@ -30,13 +34,25 @@
 
     <!-- Hero Section -->
     <section id="home" class="hero">
-        <div class="hero-content">
-            <h2>Passion Aviation</h2>
-            <p>Découvrez notre collection exclusive de t-shirts et accessoires pour les passionnés d'aviation. Des designs uniques inspirés du monde aéronautique.</p>
-            <button class="cta-button" onclick="scrollToProducts()">Découvrir nos produits</button>
-        </div>
-        <div class="hero-image">
-            <i class="fas fa-fighter-jet"></i>
+        <div class="hero-container">
+            <div class="hero-content">
+                <h2>Passion Aviation</h2>
+                <p>Découvrez notre collection exclusive de t-shirts et accessoires pour les passionnés d'aviation. Des designs uniques inspirés du monde aéronautique.</p>
+                <button class="cta-button" onclick="scrollToProducts()">Découvrir nos produits</button>
+            </div>
+            <div class="hero-center">
+                <div class="hero-image">
+                    <i class="fas fa-fighter-jet"></i>
+                </div>
+            </div>
+            <div class="hero-right">
+                <div class="hero-right-text">
+                    <p>Chaque jour, je partage avec vous cette page en y intégrant plusieurs de mes "passions", la Bande dessinée, les affiches, des objets consacrés à cette merveilleuse "aventure humaine" qu'est l'aviation... prochainement un lieu d'exposition au Mas Palegry!</p>
+                </div>
+                <div class="message-photo">
+                    <img src="images/Marc.jpg" alt="Marc - Passionné d'aviation" class="profile-photo" onerror="this.src='data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTUwIiBoZWlnaHQ9IjE1MCIgdmlld0JveD0iMCAwIDE1MCAxNTAiIGZpbGw9Im5vbmUiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+CjxyZWN0IHdpZHRoPSIxNTAiIGhlaWdodD0iMTUwIiBmaWxsPSIjRkY0NTAwIi8+CjxjaXJjbGUgY3g9Ijc1IiBjeT0iNjAiIHI9IjIwIiBmaWxsPSJ3aGl0ZSIvPgo8cGF0aCBkPSJNNDUgMTAwSDEwNVY5MEg0NVYxMDBaIiBmaWxsPSJ3aGl0ZSIvPgo8cGF0aCBkPSJNNjAgMTEwSDkwVjEyMEg2MFYxMTBaIiBmaWxsPSJ3aGl0ZSIvPgo8dGV4dCB4PSI3NSIgeT0iMTM1IiB0ZXh0LWFuY2hvcj0ibWlkZGxlIiBmaWxsPSJ3aGl0ZSIgZm9udC1zaXplPSIxMiIgZm9udC1mYW1pbHk9IkFyaWFsIj5NYXJjPC90ZXh0Pgo8L3N2Zz4K';">
+                </div>
+            </div>
         </div>
     </section>
 
@@ -63,7 +79,7 @@
     <section id="about" class="about-section">
         <div class="container">
             <h2>À propos de nous</h2>
-            <p>Aviation Store est née de la passion pour l'aviation. Nous créons des produits de qualité pour tous les amoureux du ciel, des pilotes professionnels aux passionnés d'aéromodélisme.</p>
+            <p>Les Avions du Mas Palegry est née de la passion pour l'aviation. Nous créons des produits de qualité pour tous les amoureux du ciel, des pilotes professionnels aux passionnés d'aéromodélisme.</p>
         </div>
     </section>
 
@@ -74,15 +90,15 @@
             <div class="contact-info">
                 <div class="contact-item">
                     <i class="fas fa-envelope"></i>
-                    <p>contact@aviationstore.fr</p>
+                    <p>marc.noetinger@gmail.com</p>
                 </div>
                 <div class="contact-item">
                     <i class="fas fa-phone"></i>
-                    <p>+33 1 23 45 67 89</p>
+                    <p>06 18 92 64 14</p>
                 </div>
                 <div class="contact-item">
                     <i class="fas fa-map-marker-alt"></i>
-                    <p>123 Rue de l'Aviation, 75001 Paris</p>
+                    <p>Mas PALEGRY 66000 PERPIGNAN </p>
                 </div>
             </div>
         </div>
@@ -111,10 +127,10 @@
     <!-- Footer -->
     <footer class="footer">
         <div class="container">
-            <p>&copy; 2024 Aviation Store. Tous droits réservés.</p>
+            <p>&copy; 2024 Les Avions du Mas Palegry. Tous droits réservés.</p>
         </div>
     </footer>
 
-    <script src="script.js"></script>
+    <script src="js/main.js"></script>
 </body>
 </html>

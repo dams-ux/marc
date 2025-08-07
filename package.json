@@ -1,7 +1,7 @@
 {
-  "name": "aviation-store",
-  "version": "1.0.0",
-  "description": "Site e-commerce pour t-shirts et accessoires d'aviation",
+  "name": "les-avions-du-mas-palegry",
+  "version": "2.0.0",
+  "description": "Site e-commerce Les Avions du Mas Palegry - T-shirts et accessoires d'aviation",
   "main": "index.html",
   "scripts": {
     "start": "npx live-server --port=3000 --open=/index.html",

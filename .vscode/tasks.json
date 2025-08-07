@@ -1,18 +1,41 @@
 {
-	"version": "2.0.0",
-	"tasks": [
-		{
-			"label": "Start Aviation Store",
-			"type": "shell",
-			"command": "npx",
-			"args": [
-				"live-server",
-				"--port=3000",
-				"--open=/index.html"
-			],
-			"group": "build",
-			"isBackground": true,
-			"problemMatcher": []
-		}
-	]
+    "version": "2.0.0",
+    "tasks": [
+        {
+            "label": "Démarrer le site",
+            "type": "shell",
+            "command": "npm start",
+            "group": "build",
+            "presentation": {
+                "echo": true,
+                "reveal": "always",
+                "focus": false,
+                "panel": "shared"
+            },
+            "problemMatcher": [],
+            "detail": "Démarre le serveur de développement sur http://localhost:3000"
+        },
+        {
+            "label": "Ouvrir dans le navigateur",
+            "type": "shell",
+            "command": "start",
+            "args": ["http://localhost:3000"],
+            "group": "build",
+            "detail": "Ouvre le site dans le navigateur par défaut"
+        },
+        {
+            "label": "Démarrer backend",
+            "type": "shell",
+            "command": "node",
+            "args": ["backend/server.js"],
+            "group": "build",
+            "presentation": {
+                "echo": true,
+                "reveal": "always",
+                "focus": false,
+                "panel": "shared"
+            },
+            "detail": "Démarre le serveur backend sur le port 3001"
+        }
+    ]
 }

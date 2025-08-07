@@ -1,0 +1,217 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Commande confirmée - Les Avions du Mas Palegry</title>
+    <link rel="stylesheet" href="css/main.css">
+    <link rel="stylesheet" href="css/order-confirmation.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body>
+    <!-- Navigation -->
+    <nav class="navbar">
+        <div class="nav-container">
+            <div class="nav-logo">
+                <i class="fas fa-plane"></i>
+                <span>Les Avions du Mas Palegry</span>
+            </div>
+            <div class="nav-menu">
+                <a href="index.html" class="nav-link">
+                    <i class="fas fa-home"></i> Accueil
+                </a>
+                <div class="nav-link cart-icon">
+                    <i class="fas fa-shopping-cart"></i>
+                    <span class="cart-count">0</span>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <div class="confirmation-container">
+        <div class="confirmation-card">
+            <div class="success-icon">
+                <i class="fas fa-check-circle"></i>
+            </div>
+            
+            <h1>Commande confirmée !</h1>
+            <p>Merci pour votre achat. Votre commande a été traitée avec succès.</p>
+            
+            <div class="order-number" id="order-number">
+                Commande #AV123456789
+            </div>
+            
+            <div class="order-details" id="order-details">
+                <!-- Détails de commande chargés dynamiquement -->
+            </div>
+            
+            <div class="tracking-info">
+                <h4><i class="fas fa-truck"></i> Livraison</h4>
+                <p>Votre commande sera expédiée sous 24-48h. Vous recevrez un email de confirmation avec le numéro de suivi.</p>
+                <p><strong>Adresse de livraison:</strong> <span id="delivery-address"></span></p>
+            </div>
+            
+            <div class="action-buttons">
+                <a href="index.html" class="btn btn-primary">
+                    <i class="fas fa-shopping-bag"></i>
+                    Continuer mes achats
+                </a>
+                <button onclick="downloadInvoice()" class="btn btn-secondary">
+                    <i class="fas fa-download"></i>
+                    Télécharger la facture
+                </button>
+                <button onclick="sendConfirmationEmail()" class="btn btn-secondary">
+                    <i class="fas fa-envelope"></i>
+                    Renvoyer l'email
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <script src="js/main.js"></script>
+    <script>
+        // Load order confirmation
+        document.addEventListener('DOMContentLoaded', function() {
+            loadOrderConfirmation();
+        });
+        
+        function loadOrderConfirmation() {
+            const orderData = JSON.parse(localStorage.getItem('lastOrder'));
+            
+            if (!orderData) {
+                // Redirect to home if no order data
+                window.location.href = 'index.html';
+                return;
+            }
+            
+            // Update order number
+            document.getElementById('order-number').textContent = `Commande #${orderData.id}`;
+            
+            // Update order details
+            const detailsContainer = document.getElementById('order-details');
+            detailsContainer.innerHTML = `
+                <h3>Détails de la commande</h3>
+                ${orderData.items.map(item => `
+                    <div class="detail-row">
+                        <span>${item.name} × ${item.quantity}</span>
+                        <span>${(item.price * item.quantity).toFixed(2)}€</span>
+                    </div>
+                `).join('')}
+                <div class="detail-row">
+                    <span>Sous-total:</span>
+                    <span>${orderData.subtotal.toFixed(2)}€</span>
+                </div>
+                <div class="detail-row">
+                    <span>Livraison:</span>
+                    <span>${orderData.shipping.toFixed(2)}€</span>
+                </div>
+                <div class="detail-row">
+                    <span>TVA:</span>
+                    <span>${orderData.tax.toFixed(2)}€</span>
+                </div>
+                <div class="detail-row">
+                    <span>Total:</span>
+                    <span>${orderData.total.toFixed(2)}€</span>
+                </div>
+            `;
+            
+            // Update delivery address
+            const customer = orderData.customer;
+            document.getElementById('delivery-address').textContent = 
+                `${customer.firstName} ${customer.lastName}, ${customer.address}, ${customer.city} ${customer.zipCode}`;
+        }
+        
+        function downloadInvoice() {
+            const orderData = JSON.parse(localStorage.getItem('lastOrder'));
+            if (!orderData) return;
+            
+            // Generate PDF invoice (simulation)
+            const invoiceContent = generateInvoiceHTML(orderData);
+            const blob = new Blob([invoiceContent], { type: 'text/html' });
+            const url = URL.createObjectURL(blob);
+            
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = `facture-${orderData.id}.html`;
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+            URL.revokeObjectURL(url);
+            
+            alert('Facture téléchargée ! En production, ceci serait un PDF.');
+        }
+        
+        function generateInvoiceHTML(orderData) {
+            return `
+                <!DOCTYPE html>
+                <html>
+                <head>
+                    <title>Facture ${orderData.id}</title>
+                    <style>
+                        body { font-family: Arial, sans-serif; margin: 2rem; }
+                        .header { text-align: center; border-bottom: 2px solid #FF4500; padding-bottom: 1rem; }
+                        .details { margin: 2rem 0; }
+                        .items { width: 100%; border-collapse: collapse; margin: 1rem 0; }
+                        .items th, .items td { border: 1px solid #ddd; padding: 0.5rem; text-align: left; }
+                        .total { font-weight: bold; background: #f8f9fa; }
+                    </style>
+                </head>
+                <body>
+                    <div class="header">
+                        <h1>Les Avions du Mas Palegry</h1>
+                        <h2>Facture #${orderData.id}</h2>
+                        <p>Date: ${new Date(orderData.date).toLocaleDateString('fr-FR')}</p>
+                    </div>
+                    
+                    <div class="details">
+                        <h3>Informations client:</h3>
+                        <p>${orderData.customer.firstName} ${orderData.customer.lastName}<br>
+                        ${orderData.customer.address}<br>
+                        ${orderData.customer.city} ${orderData.customer.zipCode}<br>
+                        ${orderData.customer.email}</p>
+                    </div>
+                    
+                    <table class="items">
+                        <tr>
+                            <th>Article</th>
+                            <th>Quantité</th>
+                            <th>Prix unitaire</th>
+                            <th>Total</th>
+                        </tr>
+                        ${orderData.items.map(item => `
+                            <tr>
+                                <td>${item.name}</td>
+                                <td>${item.quantity}</td>
+                                <td>${item.price.toFixed(2)}€</td>
+                                <td>${(item.price * item.quantity).toFixed(2)}€</td>
+                            </tr>
+                        `).join('')}
+                        <tr class="total">
+                            <td colspan="3">Sous-total</td>
+                            <td>${orderData.subtotal.toFixed(2)}€</td>
+                        </tr>
+                        <tr class="total">
+                            <td colspan="3">Livraison</td>
+                            <td>${orderData.shipping.toFixed(2)}€</td>
+                        </tr>
+                        <tr class="total">
+                            <td colspan="3">TVA (20%)</td>
+                            <td>${orderData.tax.toFixed(2)}€</td>
+                        </tr>
+                        <tr class="total">
+                            <td colspan="3"><strong>Total</strong></td>
+                            <td><strong>${orderData.total.toFixed(2)}€</strong></td>
+                        </tr>
+                    </table>
+                </body>
+                </html>
+            `;
+        }
+        
+        function sendConfirmationEmail() {
+            // Simulation d'envoi d'email
+            alert('Email de confirmation renvoyé ! En production, ceci déclencherait un vrai email.');
+        }
+    </script>
+</body>
+</html>

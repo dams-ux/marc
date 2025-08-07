@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Connexion Admin - Aviation Store</title>
+    <title>Connexion Admin - Les Avions du Mas Palegry</title>
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
     <style>
         * {
@@ -176,8 +176,9 @@
             
             // Check credentials
             if (username === adminCredentials.username && password === adminCredentials.password) {
-                // Store admin session
-                sessionStorage.setItem('aviationStoreAdmin', 'true');
+                // Store admin session with timestamp
+                sessionStorage.setItem('maspalegryAdmin', 'true');
+                sessionStorage.setItem('maspalegryAdminTimestamp', Date.now().toString());
                 
                 // Show success and redirect
                 document.querySelector('.login-btn').innerHTML = '<i class="fas fa-check"></i> Connexion réussie...';
