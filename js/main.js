@@ -638,8 +638,8 @@ function addToCart(id, name, price) {
     saveUserCart(); // Utiliser la nouvelle fonction de sauvegarde utilisateur
     showCartNotification(name);
     
-    // Save sale data for admin dashboard
-    saveSaleData(id, name, price);
+    // Ne plus sauvegarder les ventes ici - seulement après paiement confirmé
+    console.log('Produit ajouté au panier (vente en attente de paiement):', name);
 }
 
 // Update cart display
@@ -799,24 +799,6 @@ function checkout() {
     
     // Redirect to checkout page
     window.location.href = 'checkout.html';
-}
-
-// Save sale data for admin dashboard
-function saveSaleData(productId, productName, price) {
-    const salesData = JSON.parse(localStorage.getItem('maspalegrySales') || '[]');
-    const today = new Date().toISOString().split('T')[0];
-    
-    salesData.push({
-        id: Date.now(),
-        productId: productId,
-        productName: productName,
-        price: price,
-        date: today,
-        timestamp: new Date().toISOString(),
-        userId: currentUserId // Ajouter l'ID utilisateur pour le tracking
-    });
-    
-    localStorage.setItem('maspalegrySales', JSON.stringify(salesData));
 }
 
 // Admin access system - Secret code

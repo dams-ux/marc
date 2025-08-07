@@ -1,0 +1,356 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Commande confirmée - Les Avions du Mas Palegry</title>
+    <link rel="stylesheet" href="css/main.css?v=2025080708">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <style>
+        .success-container {
+            max-width: 800px;
+            margin: 120px auto 0;
+            padding: 2rem;
+            text-align: center;
+        }
+        
+        .success-header {
+            background: linear-gradient(135deg, #4CAF50 0%, #2E7D32 100%);
+            color: white;
+            padding: 3rem 2rem;
+            border-radius: 15px;
+            margin-bottom: 2rem;
+            box-shadow: 0 8px 25px rgba(76, 175, 80, 0.3);
+        }
+        
+        .success-icon {
+            font-size: 4rem;
+            margin-bottom: 1rem;
+            animation: bounce 1s ease-in-out;
+        }
+        
+        .order-details {
+            background: white;
+            border: 2px solid #e0e0e0;
+            border-radius: 15px;
+            padding: 2rem;
+            margin-bottom: 2rem;
+            text-align: left;
+        }
+        
+        .order-details h3 {
+            color: #FF4500;
+            margin-bottom: 1.5rem;
+            text-align: center;
+            border-bottom: 2px solid #1E90FF;
+            padding-bottom: 0.5rem;
+        }
+        
+        .order-info {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 2rem;
+            margin-bottom: 2rem;
+        }
+        
+        .info-section {
+            background: #f8f9fa;
+            padding: 1.5rem;
+            border-radius: 10px;
+        }
+        
+        .info-section h4 {
+            color: #333;
+            margin-bottom: 1rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+        
+        .order-items {
+            background: #f8f9fa;
+            padding: 1.5rem;
+            border-radius: 10px;
+            margin-top: 1rem;
+        }
+        
+        .order-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 0.8rem 0;
+            border-bottom: 1px solid #ddd;
+        }
+        
+        .order-item:last-child {
+            border-bottom: none;
+        }
+        
+        .order-total {
+            background: #1E90FF;
+            color: white;
+            padding: 1rem;
+            border-radius: 8px;
+            text-align: center;
+            font-size: 1.2rem;
+            font-weight: bold;
+            margin-top: 1rem;
+        }
+        
+        .next-steps {
+            background: #fff3cd;
+            border: 1px solid #ffeaa7;
+            border-radius: 10px;
+            padding: 2rem;
+            margin: 2rem 0;
+        }
+        
+        .next-steps h4 {
+            color: #856404;
+            margin-bottom: 1rem;
+        }
+        
+        .next-steps ul {
+            text-align: left;
+            color: #856404;
+        }
+        
+        .next-steps li {
+            margin-bottom: 0.5rem;
+        }
+        
+        .action-buttons {
+            display: flex;
+            gap: 1rem;
+            justify-content: center;
+            margin-top: 2rem;
+        }
+        
+        .btn {
+            padding: 1rem 2rem;
+            border: none;
+            border-radius: 25px;
+            font-size: 1rem;
+            font-weight: bold;
+            cursor: pointer;
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            transition: all 0.3s ease;
+        }
+        
+        .btn-primary {
+            background: linear-gradient(135deg, #FF4500 0%, #1E90FF 100%);
+            color: white;
+        }
+        
+        .btn-secondary {
+            background: #f8f9fa;
+            color: #333;
+            border: 2px solid #ddd;
+        }
+        
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 20px rgba(0,0,0,0.2);
+        }
+        
+        @keyframes bounce {
+            0%, 20%, 50%, 80%, 100% {
+                transform: translateY(0);
+            }
+            40% {
+                transform: translateY(-10px);
+            }
+            60% {
+                transform: translateY(-5px);
+            }
+        }
+        
+        @media (max-width: 768px) {
+            .success-container {
+                margin-top: 80px;
+                padding: 1rem;
+            }
+            
+            .order-info {
+                grid-template-columns: 1fr;
+                gap: 1rem;
+            }
+            
+            .action-buttons {
+                flex-direction: column;
+                align-items: center;
+            }
+            
+            .btn {
+                width: 100%;
+                max-width: 300px;
+                justify-content: center;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Header -->
+    <header class="header">
+        <div class="container-nav">
+            <div class="nav-brand">
+                <i class="fas fa-plane"></i>
+                <h1>Les Avions du Mas Palegry</h1>
+            </div>
+            
+            <!-- Menu hamburger pour mobile -->
+            <button class="mobile-menu-toggle" aria-label="Toggle menu">
+                <span></span>
+                <span></span>
+                <span></span>
+            </button>
+            
+            <nav class="nav">
+                <a href="index.html">Accueil</a>
+                <a href="index.html#products">Produits</a>
+                <a href="index.html#about">À propos</a>
+                <a href="index.html#contact">Contact</a>
+            </nav>
+            <div class="cart-icon">
+                <i class="fas fa-shopping-cart"></i>
+                <span class="cart-count">0</span>
+            </div>
+        </div>
+    </header>
+
+    <div class="success-container">
+        <div class="success-header">
+            <i class="fas fa-check-circle success-icon"></i>
+            <h1>Commande confirmée !</h1>
+            <p>Merci pour votre achat. Votre commande a été traitée avec succès.</p>
+        </div>
+
+        <div class="order-details">
+            <h3><i class="fas fa-receipt"></i> Détails de votre commande</h3>
+            
+            <div class="order-info">
+                <div class="info-section">
+                    <h4><i class="fas fa-hashtag"></i> Numéro de commande</h4>
+                    <p id="order-number">-</p>
+                    
+                    <h4><i class="fas fa-calendar"></i> Date de commande</h4>
+                    <p id="order-date">-</p>
+                    
+                    <h4><i class="fas fa-credit-card"></i> Mode de paiement</h4>
+                    <p id="payment-method">-</p>
+                </div>
+                
+                <div class="info-section">
+                    <h4><i class="fas fa-user"></i> Informations client</h4>
+                    <p id="customer-name">-</p>
+                    <p id="customer-email">-</p>
+                    
+                    <h4><i class="fas fa-map-marker-alt"></i> Adresse de livraison</h4>
+                    <div id="delivery-address">-</div>
+                </div>
+            </div>
+            
+            <div class="order-items">
+                <h4><i class="fas fa-box"></i> Articles commandés</h4>
+                <div id="ordered-items">
+                    <!-- Items will be loaded here -->
+                </div>
+                <div class="order-total" id="final-total">
+                    Total : 0.00€
+                </div>
+            </div>
+        </div>
+
+        <div class="next-steps">
+            <h4><i class="fas fa-info-circle"></i> Prochaines étapes</h4>
+            <ul>
+                <li><strong>Confirmation par email :</strong> Vous recevrez un email de confirmation sous peu</li>
+                <li><strong>Préparation :</strong> Votre commande sera préparée dans les 24-48h</li>
+                <li><strong>Expédition :</strong> Livraison gratuite en France métropolitaine (3-5 jours ouvrés)</li>
+                <li><strong>Suivi :</strong> Un numéro de suivi vous sera envoyé dès l'expédition</li>
+            </ul>
+        </div>
+
+        <div class="action-buttons">
+            <a href="index.html" class="btn btn-primary">
+                <i class="fas fa-home"></i>
+                Retour à l'accueil
+            </a>
+            <a href="index.html#products" class="btn btn-secondary">
+                <i class="fas fa-shopping-bag"></i>
+                Continuer mes achats
+            </a>
+        </div>
+    </div>
+
+    <script src="js/main.js?v=2025080708"></script>
+    <script>
+        // Load order details from session storage
+        document.addEventListener('DOMContentLoaded', function() {
+            const lastOrder = sessionStorage.getItem('lastOrder');
+            
+            if (lastOrder) {
+                const orderData = JSON.parse(lastOrder);
+                displayOrderDetails(orderData);
+                
+                // Clear the order data after displaying
+                sessionStorage.removeItem('lastOrder');
+            } else {
+                // Redirect to home if no order data
+                window.location.href = 'index.html';
+            }
+        });
+        
+        function displayOrderDetails(order) {
+            // Order number and date
+            document.getElementById('order-number').textContent = order.orderNumber;
+            document.getElementById('order-date').textContent = new Date(order.timestamp).toLocaleDateString('fr-FR');
+            
+            // Payment method
+            const paymentMethodText = {
+                'card': 'Carte bancaire',
+                'paypal': 'PayPal',
+                'stripe': 'Stripe'
+            };
+            document.getElementById('payment-method').textContent = paymentMethodText[order.paymentMethod] || order.paymentMethod;
+            
+            // Customer info
+            document.getElementById('customer-name').textContent = `${order.customer.firstName} ${order.customer.lastName}`;
+            document.getElementById('customer-email').textContent = order.customer.email;
+            
+            // Delivery address
+            const address = order.customer.address;
+            document.getElementById('delivery-address').innerHTML = `
+                ${address.street}<br>
+                ${address.postalCode} ${address.city}<br>
+                ${address.country}
+            `;
+            
+            // Order items
+            const itemsContainer = document.getElementById('ordered-items');
+            itemsContainer.innerHTML = '';
+            
+            order.items.forEach(item => {
+                const itemElement = document.createElement('div');
+                itemElement.className = 'order-item';
+                itemElement.innerHTML = `
+                    <div>
+                        <strong>${item.name}</strong><br>
+                        <span style="color: #666;">Quantité: ${item.quantity}</span>
+                    </div>
+                    <div>
+                        <strong>${(item.price * item.quantity).toFixed(2)}€</strong>
+                    </div>
+                `;
+                itemsContainer.appendChild(itemElement);
+            });
+            
+            // Total
+            document.getElementById('final-total').textContent = `Total : ${order.total.toFixed(2)}€`;
+        }
+    </script>
+</body>
+</html>

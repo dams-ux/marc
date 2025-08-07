@@ -1,11 +1,286 @@
 // Checkout functionality
-let stripe;
-let elements;
-let card;
-let cart = [];
-let paymentMethod = 'stripe';
+let checkoutCart = [];
+let selectedPaymentMethod = null;
 
-// Notification system
+// Initialize checkout page
+document.addEventListener('DOMContentLoaded', function() {
+    // Initialize user session for checkout
+    getUserSession();
+    
+    // Load cart from current user session
+    checkoutCart = getUserCart();
+    
+    if (checkoutCart.length === 0) {
+        // Redirect to products if cart is empty
+        window.location.href = 'index.html#products';
+        return;
+    }
+    
+    // Display order summary
+    displayOrderSummary();
+    
+    // Setup form validation
+    setupFormValidation();
+    
+    // Update cart count in header
+    updateCartDisplay();
+});
+
+// Display order summary
+function displayOrderSummary() {
+    const orderItems = document.getElementById('order-items');
+    const orderTotal = document.getElementById('order-total');
+    
+    orderItems.innerHTML = '';
+    let total = 0;
+    
+    checkoutCart.forEach(item => {
+        const itemElement = document.createElement('div');
+        itemElement.className = 'order-item';
+        itemElement.innerHTML = `
+            <div>
+                <strong>${item.name}</strong><br>
+                <span style="color: #666;">Quantité: ${item.quantity}</span>
+            </div>
+            <div>
+                <strong>${(item.price * item.quantity).toFixed(2)}€</strong>
+            </div>
+        `;
+        orderItems.appendChild(itemElement);
+        total += item.price * item.quantity;
+    });
+    
+    orderTotal.textContent = `Total : ${total.toFixed(2)}€`;
+}
+
+// Select payment method
+function selectPaymentMethod(method) {
+    // Remove selected class from all methods
+    const methods = document.querySelectorAll('.payment-method');
+    methods.forEach(m => m.classList.remove('selected'));
+    
+    // Add selected class to clicked method
+    event.target.closest('.payment-method').classList.add('selected');
+    
+    // Set the selected method
+    selectedPaymentMethod = method;
+    document.getElementById('paymentMethod').value = method;
+    
+    console.log('Payment method selected:', method);
+}
+
+// Setup form validation
+function setupFormValidation() {
+    const form = document.getElementById('checkout-form');
+    
+    form.addEventListener('submit', function(e) {
+        e.preventDefault();
+        
+        if (validateForm()) {
+            processOrder();
+        }
+    });
+}
+
+// Validate form
+function validateForm() {
+    const requiredFields = ['firstName', 'lastName', 'email', 'address', 'city', 'postalCode', 'country'];
+    let isValid = true;
+    
+    // Check required fields
+    requiredFields.forEach(fieldName => {
+        const field = document.getElementById(fieldName);
+        if (!field.value.trim()) {
+            field.style.borderColor = '#e74c3c';
+            isValid = false;
+        } else {
+            field.style.borderColor = '#ddd';
+        }
+    });
+    
+    // Check payment method
+    if (!selectedPaymentMethod) {
+        showNotification('Veuillez sélectionner un mode de paiement', 'error');
+        isValid = false;
+    }
+    
+    // Email validation
+    const email = document.getElementById('email').value;
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (email && !emailRegex.test(email)) {
+        document.getElementById('email').style.borderColor = '#e74c3c';
+        showNotification('Format d\'email invalide', 'error');
+        isValid = false;
+    }
+    
+    if (!isValid) {
+        showNotification('Veuillez remplir tous les champs obligatoires', 'error');
+    }
+    
+    return isValid;
+}
+
+// Process order
+async function processOrder() {
+    const submitBtn = document.getElementById('submit-btn');
+    const loading = document.getElementById('loading');
+    const form = document.getElementById('checkout-form');
+    
+    // Show loading state
+    submitBtn.disabled = true;
+    submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Traitement...';
+    
+    try {
+        // Collect form data
+        const formData = new FormData(form);
+        const orderData = {
+            orderNumber: generateOrderNumber(),
+            userId: currentUserId,
+            timestamp: new Date().toISOString(),
+            customer: {
+                firstName: formData.get('firstName'),
+                lastName: formData.get('lastName'),
+                email: formData.get('email'),
+                phone: formData.get('phone'),
+                address: {
+                    street: formData.get('address'),
+                    city: formData.get('city'),
+                    postalCode: formData.get('postalCode'),
+                    country: formData.get('country')
+                }
+            },
+            items: checkoutCart,
+            total: checkoutCart.reduce((sum, item) => sum + (item.price * item.quantity), 0),
+            paymentMethod: selectedPaymentMethod,
+            comments: formData.get('comments'),
+            status: 'pending' // Status initial : en attente de paiement
+        };
+        
+        console.log('Order data prepared:', orderData);
+        
+        // Simulate payment processing
+        const paymentResult = await processPayment(orderData);
+        
+        if (paymentResult.success) {
+            // Payment successful - now save the sale and complete order
+            orderData.status = 'completed';
+            orderData.paymentId = paymentResult.paymentId;
+            orderData.paidAt = new Date().toISOString();
+            
+            // Save order
+            saveOrder(orderData);
+            
+            // Save sales data (only after successful payment)
+            saveSalesAfterPayment(orderData);
+            
+            // Clear user cart
+            clearUserCart();
+            
+            // Redirect to success page
+            sessionStorage.setItem('lastOrder', JSON.stringify(orderData));
+            window.location.href = 'order-success.html';
+        } else {
+            throw new Error(paymentResult.message || 'Erreur de paiement');
+        }
+        
+    } catch (error) {
+        console.error('Order processing error:', error);
+        showNotification('Erreur lors du traitement de la commande: ' + error.message, 'error');
+        
+        // Reset button
+        submitBtn.disabled = false;
+        submitBtn.innerHTML = '<i class="fas fa-lock"></i> Passer la commande';
+    }
+}
+
+// Generate unique order number
+function generateOrderNumber() {
+    const date = new Date();
+    const year = date.getFullYear().toString().substr(-2);
+    const month = String(date.getMonth() + 1).padStart(2, '0');
+    const day = String(date.getDate()).padStart(2, '0');
+    const random = Math.floor(Math.random() * 9999).toString().padStart(4, '0');
+    
+    return `MP${year}${month}${day}${random}`;
+}
+
+// Process payment (mock implementation with different payment providers)
+async function processPayment(orderData) {
+    return new Promise((resolve) => {
+        setTimeout(() => {
+            // Simulate API call delay
+            const isSuccess = Math.random() > 0.1; // 90% success rate for demo
+            
+            if (isSuccess) {
+                resolve({
+                    success: true,
+                    paymentId: 'pay_' + Date.now() + '_' + Math.random().toString(36).substr(2, 9),
+                    transactionId: 'txn_' + Date.now(),
+                    message: 'Paiement accepté'
+                });
+            } else {
+                resolve({
+                    success: false,
+                    message: 'Paiement refusé - Veuillez vérifier vos informations'
+                });
+            }
+        }, 2000); // 2 second delay to simulate processing
+    });
+}
+
+// Save order to localStorage
+function saveOrder(orderData) {
+    const orders = JSON.parse(localStorage.getItem('maspalegryOrders') || '[]');
+    orders.push(orderData);
+    localStorage.setItem('maspalegryOrders', JSON.stringify(orders));
+    console.log('Order saved:', orderData.orderNumber);
+}
+
+// Save sales data after successful payment
+function saveSalesAfterPayment(orderData) {
+    const salesData = JSON.parse(localStorage.getItem('maspalegrySales') || '[]');
+    const today = new Date().toISOString().split('T')[0];
+    
+    // Add each item as a separate sale record
+    orderData.items.forEach(item => {
+        for (let i = 0; i < item.quantity; i++) {
+            salesData.push({
+                id: Date.now() + '_' + Math.random().toString(36).substr(2, 9),
+                orderNumber: orderData.orderNumber,
+                productId: item.id,
+                productName: item.name,
+                price: item.price,
+                date: today,
+                timestamp: orderData.paidAt, // Use payment timestamp
+                userId: orderData.userId,
+                customerEmail: orderData.customer.email,
+                paymentMethod: orderData.paymentMethod,
+                status: 'completed' // Only completed sales are recorded
+            });
+        }
+    });
+    
+    localStorage.setItem('maspalegrySales', JSON.stringify(salesData));
+    console.log('Sales data saved after payment completion');
+}
+
+// Clear user cart after successful order
+function clearUserCart() {
+    checkoutCart = [];
+    cart = []; // Clear global cart variable
+    saveUserCart(); // Save empty cart
+    updateCartDisplay(); // Update display
+}
+
+// Update cart display for header
+function updateCartDisplay() {
+    const cartCountElement = document.querySelector('.cart-count');
+    if (cartCountElement) {
+        cartCountElement.textContent = checkoutCart.reduce((total, item) => total + item.quantity, 0);
+    }
+}
+
+// Notification system (reuse from main.js but ensure it's available)
 function showNotification(message, type = 'info') {
     const notification = document.createElement('div');
     notification.className = `notification notification-${type}`;
@@ -14,7 +289,6 @@ function showNotification(message, type = 'info') {
         <button onclick="this.parentElement.remove()">&times;</button>
     `;
     
-    // Style de la notification
     let backgroundColor;
     if (type === 'error') {
         backgroundColor = '#ff4444';
@@ -43,239 +317,11 @@ function showNotification(message, type = 'info') {
     
     document.body.appendChild(notification);
     
-    // Auto-suppression après 5 secondes
     setTimeout(() => {
         if (notification.parentElement) {
             notification.remove();
         }
     }, 5000);
-}
-
-// Configuration
-const config = {
-    stripe: {
-        publishableKey: 'pk_test_YOUR_STRIPE_PUBLISHABLE_KEY', // À remplacer par votre vraie clé
-        secretKey: 'sk_test_YOUR_STRIPE_SECRET_KEY' // À garder secret côté serveur
-    },
-    paypal: {
-        clientId: 'YOUR_PAYPAL_CLIENT_ID' // À remplacer par votre vraie clé
-    },
-    shipping: {
-        standard: 5.99,
-        express: 12.99,
-        free_threshold: 50.00
-    },
-    tax_rate: 0.20 // TVA 20%
-};
-
-// Initialize checkout
-document.addEventListener('DOMContentLoaded', function() {
-    loadCart();
-    initializeStripe();
-    initializePayPal();
-    setupEventListeners();
-    updateOrderSummary();
-});
-
-// Load cart from localStorage
-function loadCart() {
-    const savedCart = localStorage.getItem('maspalegryCart');
-    if (savedCart) {
-        cart = JSON.parse(savedCart);
-    } else {
-        // Redirect to home if no cart
-        window.location.href = 'index.html';
-    }
-}
-
-// Initialize Stripe
-function initializeStripe() {
-    // Pour la démonstration, nous utilisons une clé de test publique
-    // En production, remplacez par votre vraie clé Stripe
-    stripe = Stripe(config.stripe.publishableKey);
-    elements = stripe.elements();
-    
-    // Créer l'élément de carte
-    const style = {
-        base: {
-            fontSize: '16px',
-            color: '#424770',
-            '::placeholder': {
-                color: '#aab7c4',
-            },
-        },
-    };
-    
-    card = elements.create('card', { style });
-    card.mount('#card-element');
-    
-    // Gérer les erreurs en temps réel
-    card.on('change', function(event) {
-        const displayError = document.getElementById('card-errors');
-        if (event.error) {
-            displayError.textContent = event.error.message;
-        } else {
-            displayError.textContent = '';
-        }
-    });
-}
-
-// Initialize PayPal
-function initializePayPal() {
-    if (typeof paypal !== 'undefined') {
-        paypal.Buttons({
-            createOrder: function(data, actions) {
-                const total = calculateTotal();
-                return actions.order.create({
-                    purchase_units: [{
-                        amount: {
-                            value: total.toFixed(2),
-                            currency_code: 'EUR'
-                        },
-                        description: 'Commande Aviation Store'
-                    }]
-                });
-            },
-            onApprove: function(data, actions) {
-                return actions.order.capture().then(function(details) {
-                    processSuccessfulPayment('paypal', details);
-                });
-            },
-            onError: function(err) {
-                console.error('Erreur PayPal:', err);
-                showError('Erreur lors du paiement PayPal. Veuillez réessayer.');
-            }
-        }).render('#paypal-button-container');
-    }
-}
-
-// Setup event listeners
-function setupEventListeners() {
-    // Payment method selection
-    document.querySelectorAll('.payment-method').forEach(method => {
-        method.addEventListener('click', function() {
-            selectPaymentMethod(this.dataset.method);
-        });
-    });
-    
-    // Form submission
-    document.getElementById('checkout-form').addEventListener('submit', handleFormSubmit);
-    
-    // Country change for shipping calculation
-    document.getElementById('country').addEventListener('change', updateOrderSummary);
-}
-
-// Select payment method
-function selectPaymentMethod(method) {
-    paymentMethod = method;
-    
-    // Update UI
-    document.querySelectorAll('.payment-method').forEach(pm => {
-        pm.classList.remove('active');
-    });
-    document.querySelector(`[data-method="${method}"]`).classList.add('active');
-    
-    // Show/hide payment forms
-    document.getElementById('stripe-payment').style.display = method === 'stripe' ? 'block' : 'none';
-    document.getElementById('paypal-payment').style.display = method === 'paypal' ? 'block' : 'none';
-    
-    // Update button text
-    const buttonText = document.getElementById('button-text');
-    switch(method) {
-        case 'stripe':
-            buttonText.innerHTML = '<i class="fas fa-lock"></i> Payer par carte';
-            break;
-        case 'paypal':
-            buttonText.innerHTML = '<i class="fab fa-paypal"></i> Payer avec PayPal';
-            break;
-        case 'apple':
-            buttonText.innerHTML = '<i class="fab fa-apple-pay"></i> Payer avec Apple Pay';
-            break;
-        case 'google':
-            buttonText.innerHTML = '<i class="fab fa-google-pay"></i> Payer avec Google Pay';
-            break;
-    }
-}
-
-// Handle form submission
-async function handleFormSubmit(event) {
-    event.preventDefault();
-    
-    const submitButton = document.getElementById('submit-button');
-    const buttonText = document.getElementById('button-text');
-    const loading = document.getElementById('loading');
-    
-    // Disable submit button and show loading
-    submitButton.disabled = true;
-    buttonText.style.display = 'none';
-    loading.classList.add('show');
-    
-    try {
-        // Validate form
-        if (!validateForm()) {
-            throw new Error('Veuillez remplir tous les champs obligatoires');
-        }
-        
-        // Process payment based on method
-        switch(paymentMethod) {
-            case 'stripe':
-                await processStripePayment();
-                break;
-            case 'paypal':
-                // PayPal est géré par son propre bouton
-                showError('Veuillez utiliser le bouton PayPal ci-dessus');
-                break;
-            case 'apple':
-                await processApplePayment();
-                break;
-            case 'google':
-                await processGooglePayment();
-                break;
-            default:
-                throw new Error('Méthode de paiement non supportée');
-        }
-    } catch (error) {
-        showError(error.message);
-    } finally {
-        // Re-enable submit button and hide loading
-        submitButton.disabled = false;
-        buttonText.style.display = 'flex';
-        loading.classList.remove('show');
-    }
-}
-
-// Process Stripe payment
-async function processStripePayment() {
-    const formData = getFormData();
-    
-    // Créer un Payment Intent côté serveur (simulation)
-    const paymentIntent = await createPaymentIntent();
-    
-    const {error, paymentMethod} = await stripe.confirmCardPayment(
-        paymentIntent.client_secret,
-        {
-            payment_method: {
-                card: card,
-                billing_details: {
-                    name: `${formData.firstName} ${formData.lastName}`,
-                    email: formData.email,
-                    phone: formData.phone,
-                    address: {
-                        line1: formData.address,
-                        city: formData.city,
-                        postal_code: formData.zipCode,
-                        country: formData.country,
-                    }
-                }
-            }
-        }
-    );
-    
-    if (error) {
-        throw new Error(error.message);
-    } else {
-        processSuccessfulPayment('stripe', paymentMethod);
-    }
 }
 
 // Create Payment Intent (simulation - en production, ceci doit être fait côté serveur)
