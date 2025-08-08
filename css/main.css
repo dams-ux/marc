@@ -349,33 +349,44 @@ body {
 }
 
 @media (max-width: 768px) {
-    /* Navigation mobile */
+    /* Navigation mobile - Amélioration de l'affichage */
     .container-nav {
-        padding: 0 15px;
+        padding: 0 10px; /* Réduction du padding pour plus d'espace */
+        gap: 10px; /* Espacement entre les éléments */
     }
     
     .mobile-menu-toggle {
         display: flex;
         order: 2;
+        flex-shrink: 0; /* Empêche la compression du bouton menu */
     }
     
     .nav-brand {
         order: 1;
-        gap: 10px;
+        gap: 8px;
+        flex-shrink: 1; /* Permet la compression si nécessaire */
+        min-width: 0; /* Permet au texte de se réduire */
     }
     
     .nav-brand h1 {
-        font-size: 1.4rem;
+        font-size: 1.2rem; /* Réduction de la taille sur mobile */
+        white-space: nowrap; /* Évite le retour à la ligne */
+        overflow: hidden;
+        text-overflow: ellipsis; /* Ajoute ... si trop long */
     }
     
     .nav-brand i {
-        font-size: 1.6rem;
+        font-size: 1.4rem; /* Réduction de la taille de l'icône */
+        flex-shrink: 0; /* L'icône garde sa taille */
     }
     
     .cart-icon {
         order: 3;
-        font-size: 1.4rem;
-        padding: 0.6rem;
+        font-size: 1.2rem; /* Réduction de la taille */
+        padding: 0.5rem;
+        flex-shrink: 0; /* Empêche la compression du panier */
+        min-width: 50px; /* Largeur minimale pour le panier */
+        text-align: center;
     }
     
     .nav {
@@ -415,8 +426,41 @@ body {
     .nav a:hover {
         background: rgba(255, 255, 255, 0.1);
     }
+}
+
+/* Media query pour très petits écrans (iPhone SE, etc.) */
+@media (max-width: 480px) {
+    .container-nav {
+        padding: 0 8px;
+    }
     
-    .header {
+    .nav-brand h1 {
+        font-size: 1rem; /* Encore plus petit pour les très petits écrans */
+        max-width: 180px; /* Limite la largeur du titre */
+    }
+    
+    .nav-brand i {
+        font-size: 1.2rem;
+    }
+    
+    .cart-icon {
+        font-size: 1.1rem;
+        padding: 0.4rem;
+        min-width: 45px;
+    }
+    
+    .mobile-menu-toggle {
+        width: 35px;
+        height: 35px;
+    }
+    
+    .mobile-menu-toggle span {
+        width: 20px;
+        height: 2px;
+    }
+}
+
+.header {
         padding: 0.5rem 0;
     }
     
