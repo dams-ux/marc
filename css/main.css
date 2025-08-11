@@ -524,9 +524,7 @@ body {
     .hero-image i {
         font-size: 8rem;
     }
-}
-
-@media (max-width: 480px) {
+    
     .hero-content h2 {
         font-size: 2rem;
     }

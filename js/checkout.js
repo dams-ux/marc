@@ -126,7 +126,6 @@ function validateForm() {
 // Process order
 async function processOrder() {
     const submitBtn = document.getElementById('submit-btn');
-    const loading = document.getElementById('loading');
     const form = document.getElementById('checkout-form');
     
     // Show loading state
@@ -270,7 +269,10 @@ function saveSalesAfterPayment(orderData) {
 // Clear user cart after successful order
 function clearUserCart() {
     checkoutCart = [];
-    cart = []; // Clear global cart variable
+    // Clear global cart variable if it exists
+    if (typeof window.cart !== 'undefined') {
+        window.cart = [];
+    }
     saveUserCart(); // Save empty cart
     updateCartDisplay(); // Update display
 }
@@ -431,7 +433,9 @@ function saveOrder(orderData) {
 
 // Clear cart
 function clearCart() {
-    cart = [];
+    if (typeof window.cart !== 'undefined') {
+        window.cart = [];
+    }
     localStorage.removeItem('maspalegryCart');
 }
 

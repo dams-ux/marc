@@ -681,7 +681,35 @@ function editProduct(id) {
 
     document.getElementById('product-modal').style.display = 'block';
 }
-// Save product (add or edit)
+
+// Helper function to handle product images
+function handleProductImages(productData, productId, products) {
+    const frontImg = document.querySelector('#preview-front img');
+    const backImg = document.querySelector('#preview-back img');
+    
+    // Si on modifie un produit existant, partir de ses images existantes
+    if (productId) {
+        const existingProduct = products[productId];
+        if (existingProduct.images) {
+            productData.images = { ...existingProduct.images };
+        }
+    }
+    
+    // Mettre à jour avec les nouvelles images si elles existent
+    if (frontImg && frontImg.src && !frontImg.src.includes('placeholder')) {
+        if (!productData.images) productData.images = {};
+        productData.images.front = frontImg.src;
+    }
+    
+    if (backImg && backImg.src && !backImg.src.includes('placeholder')) {
+        if (!productData.images) productData.images = {};
+        productData.images.back = backImg.src;
+    }
+    
+    return productData;
+}
+
+// Save product (add or edit) - Simplified function
 function saveProduct(event) {
     console.log('saveProduct called with event:', event);
     event.preventDefault();
@@ -698,7 +726,7 @@ function saveProduct(event) {
         productsCount: Object.keys(products).length
     });
 
-    const productData = {
+    let productData = {
         name: formData.get('name'),
         price: parseFloat(formData.get('price')),
         category: formData.get('category'),
@@ -708,16 +736,8 @@ function saveProduct(event) {
     
     console.log('Product data created:', productData);
 
-    // Gestion des images - récupérer les images actuelles dans les previews
-    const frontImg = document.querySelector('#preview-front img');
-    const backImg = document.querySelector('#preview-back img');
-    
-    // Si on modifie un produit existant, partir de ses images existantes
-    if (productId) {
-        const existingProduct = products[productId];
-        if (existingProduct.images) {
-            productData.images = { ...existingProduct.images };
-        }
+    // Handle images using helper function
+    productData = handleProductImages(productData, productId, products);
     }
     
     // Mettre à jour avec les nouvelles images si elles existent
@@ -738,14 +758,14 @@ function saveProduct(event) {
         // Edit existing product
         console.log('Editing existing product with ID:', productId);
         products[productId] = productData;
-        showMessage(`Produit "${productData.name}" modifié avec succès!`, 'success');
+        showMessage(`Produit "${(productData.name || 'Sans nom').toString()}" modifié avec succès!`, 'success');
     } else {
         // Add new product
         const existingIds = Object.keys(products).map(Number).filter(id => !isNaN(id));
         const newId = existingIds.length > 0 ? Math.max(...existingIds) + 1 : 1;
         console.log('Adding new product with ID:', newId, 'Existing IDs:', existingIds);
         products[newId] = productData;
-        showMessage(`Produit "${productData.name}" ajouté avec succès!`, 'success');
+        showMessage(`Produit "${(productData.name || 'Sans nom').toString()}" ajouté avec succès!`, 'success');
     }
 
     console.log('Products before save:', Object.keys(products).length);
@@ -839,8 +859,9 @@ function handleImageUpload(event, position) {
     const reader = new FileReader();
     reader.onload = function(e) {
         const previewElement = document.getElementById(`preview-${position}`);
+        const imageUrl = String(e.target.result || '');
         previewElement.innerHTML = `
-            <img src="${e.target.result}" alt="Aperçu ${position}" style="width: 100%; height: 100%; object-fit: cover; border-radius: 8px;">
+            <img src="${imageUrl}" alt="Aperçu ${position}" style="width: 100%; height: 100%; object-fit: cover; border-radius: 8px;">
             <button type="button" class="remove-image" onclick="removeImage('${position}')" title="Supprimer l'image">
                 <i class="fas fa-times"></i>
             </button>
