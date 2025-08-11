@@ -788,6 +788,7 @@ function saveProduct(event) {
         refreshData();
     }
 }
+
 // Delete product
 function deleteProduct(id) {
     const products = getProducts();
